@@ -7,11 +7,12 @@ import { getClient } from '~/common/client';
   This script reserves and creates a Security Token
     with the specified ticker
 */
-(async () => {
+(async (): Promise<void> => {
   console.log('Connecting to the node...\n\n');
   const api = await getClient(process.env.ACCOUNT_SEED);
 
-  const identity = api.getIdentity();
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  const identity = (await api.getCurrentIdentity())!;
   console.log(`Connected! Current identity ID: ${identity.did}`);
 
   const ticker = process.argv[2];
@@ -35,13 +36,12 @@ import { getClient } from '~/common/client';
     isDivisible: true,
     tokenType: KnownTokenType.EquityCommon,
     totalSupply: new BigNumber(3000),
-    treasury: api.getIdentity(),
   });
 
   console.log('Creating Security Token...\n');
   const token = await creationQ.run();
 
-  const { treasuryIdentity } = await token.details();
+  const { primaryIssuanceAgent } = await token.details();
 
-  console.log(`Token created! Treasury DID: ${treasuryIdentity?.did}`);
+  console.log(`Token created! Primary Issuance Agent: ${primaryIssuanceAgent?.did}`);
 })();
