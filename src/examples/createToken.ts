@@ -4,8 +4,11 @@ import BigNumber from 'bignumber.js';
 import { getClient } from '~/common/client';
 
 /* 
-  This script reserves and creates a Security Token
-    with the specified ticker
+  This script showcases Security Token related functonality. It: 
+    - Reserves a Security Token with the specified ticker
+    - Creates it
+    - Assigns a list of documents to the Security Token
+    - Removes a document from the current list
 */
 (async (): Promise<void> => {
   console.log('Connecting to the node...\n\n');
@@ -43,5 +46,38 @@ import { getClient } from '~/common/client';
 
   const { primaryIssuanceAgent } = await token.details();
 
-  console.log(`Token created! Primary Issuance Agent: ${primaryIssuanceAgent?.did}`);
+  console.log(`Token created! Primary Issuance Agent: ${primaryIssuanceAgent?.did}\n`);
+
+  console.log(`Assigning a list of documents to ${ticker}...\n`);
+
+  const doc1 = {
+    name: 'Document One',
+    uri: 'https://some.web/one',
+    contentHash: 'someHash',
+  };
+  const doc2 = {
+    name: 'Document Two',
+    uri: 'https://some.web/two',
+    contentHash: 'someHash',
+  };
+
+  let setDocuments = await token.documents.set({ documents: [doc1, doc2] });
+  await setDocuments.run();
+
+  let docs = await token.documents.get();
+  console.log('Added documents:');
+  docs.data.forEach(({ name }) => {
+    console.log(`- ${name}`);
+  });
+
+  console.log('\nRemoving Document One...\n');
+
+  setDocuments = await token.documents.set({ documents: [doc2] });
+  await setDocuments.run();
+
+  docs = await token.documents.get();
+  console.log('Final Documents:');
+  docs.data.forEach(({ name }) => {
+    console.log(`- ${name}`);
+  });
 })();
