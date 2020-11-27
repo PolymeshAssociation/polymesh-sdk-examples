@@ -16,9 +16,15 @@ import { getClient } from '~/common/client';
   const identity = (await api.getCurrentIdentity())!;
   console.log(`Connected! Current identity ID: ${identity.did}`);
 
+  const accountAddress = process.argv[2];
+
+  if (!accountAddress) {
+    throw new Error('Please supply an account address as an argument to the script');
+  }
+
   // Account to invite to join to the current identity
   const targetAccount = await api.getAccount({
-    address: '5GYy3N778BX5LjndhPpD4BFCsiUge5VdFimFcxCXsEFaUVRD',
+    address: accountAddress,
   });
 
   const inviteAccount = await identity.inviteAccount({ targetAccount });
