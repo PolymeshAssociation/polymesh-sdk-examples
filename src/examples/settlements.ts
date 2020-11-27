@@ -4,8 +4,9 @@ import BigNumber from 'bignumber.js';
 import { getClient } from '~/common/client';
 
 /* 
-  This script demonstrates Settlement functionality. It:
+  This script showcases Settlement related functionality. It:
     - Creates a Venue
+    - Fetches a Venue's details
     - Fetches all of the current Identity's Venues
     - Adds an Instruction to a Venue
     - Fetches all of the current Identity's Pending Instructions
@@ -33,12 +34,16 @@ import { getClient } from '~/common/client';
   /* Venues can be fetched */
   // const venues = await identity.getVenues();
 
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  const bob = api.getIdentity({ did: process.env.BOB_DID! });
+
+  const destinationPortfolio = await bob.portfolios.getPortfolio({ portfolioId: new BigNumber(3) });
+
   const instructionQ = await venue.addInstruction({
     legs: [
       {
-        from: identity,
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        to: process.env.BOB_DID!,
+        from: identity, // passing the Identity (or did) means the default portolio will be used
+        to: destinationPortfolio, // or you can pass a Portfolio
         amount: new BigNumber(1000),
         token: 'MY_TOKEN',
       },
@@ -66,17 +71,17 @@ import { getClient } from '~/common/client';
 
   legs.forEach(({ from, to, amount, token }) => {
     console.log(
-      `- From: ${from.did}\n- To: ${to.did}\n- Amount: ${amount.toFormat()}\n- Token: ${
+      `- From: ${from.owner.did}\n- To: ${to.owner.did}\n- Amount: ${amount.toFormat()}\n- Token: ${
         token.ticker
       }`
     );
   });
 
-  const authorizeQ = await instruction.authorize();
+  const authorizeQ = await instruction.authorize(); // will be `affirm` when the 2.3 upgrade is complete
 
   await authorizeQ.run();
 
-  /* Instructions can be unauthorized or rejected */
+  /* Instructions can be unauthorized (will be withdrawn) or rejected */
   /* 
     const unauthorizeQ = await instruction.unauthorize();
     await unauthorzeQ.run();
