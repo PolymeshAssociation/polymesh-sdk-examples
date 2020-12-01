@@ -56,23 +56,23 @@ import { getClient } from '~/common/client';
   const details = await instruction.details();
   console.log(`Instruction Created! Creation Date: ${details.createdAt}`);
 
-  const auths = await instruction.getAuthorizations();
+  const auths = await instruction.getAffirmations();
 
-  auths.forEach(({ identity, authorizationStatus }) => {
-    console.log(`- Authorizing DID: ${identity.did}\n- Status: ${authorizationStatus}`); // Authorized/Pending/Rejected/Unknown
+  auths.forEach(({ identity, status }) => {
+    console.log(`- Authorizing DID: ${identity.did}\n- Status: ${status}`); // Authorized/Pending/Rejected/Unknown
   });
 
   const legs = await instruction.getLegs();
 
   legs.forEach(({ from, to, amount, token }) => {
     console.log(
-      `- From: ${from.did}\n- To: ${to.did}\n- Amount: ${amount.toFormat()}\n- Token: ${
+      `- From: ${from.uuid}\n- To: ${to.uuid}\n- Amount: ${amount.toFormat()}\n- Token: ${
         token.ticker
       }`
     );
   });
 
-  const authorizeQ = await instruction.authorize();
+  const authorizeQ = await instruction.affirm();
 
   await authorizeQ.run();
 
