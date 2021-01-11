@@ -4,7 +4,7 @@ import { getClient } from '~/common/client';
 
 /* 
   This script demonstrates Identity functionality. It:
-    - Sends an invitation to an account to join to the current identity
+    - Sends an invitation to an Account to join the current Identity
     - Queries the current identity's signing keys
     - Removes the first signing key
 */
