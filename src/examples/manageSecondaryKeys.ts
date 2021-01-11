@@ -23,7 +23,7 @@ import { getClient } from '~/common/client';
   }
 
   // Account to invite to join the current Identity
-  const targetAccount = await api.getAccount({
+  const targetAccount = api.getAccount({
     address: accountAddress,
   });
 
