@@ -42,7 +42,7 @@
     "prettier": "^1.19.1",
     "prettier-eslint": "^9.0.1",
     "prettier-eslint-cli": "^5.0.0",
-    "semantic-release": "^16.0.3",
+    "semantic-release": "^17.2.3",
     "tsconfig-paths": "^3.9.0",
     "ts-jest": "^24.3.0",
     "ttypescript": "^1.5.10",
