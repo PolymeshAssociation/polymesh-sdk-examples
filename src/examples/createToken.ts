@@ -61,8 +61,8 @@ import { getClient } from '~/common/client';
     contentHash: 'someHash',
   };
 
-  let setDocuments = await token.documents.set({ documents: [doc1, doc2] });
-  await setDocuments.run();
+  let setDocumentsQ = await token.documents.set({ documents: [doc1, doc2] });
+  await setDocumentsQ.run();
 
   let docs = await token.documents.get();
   console.log('Added documents:');
@@ -72,8 +72,8 @@ import { getClient } from '~/common/client';
 
   console.log('\nRemoving Document One...\n');
 
-  setDocuments = await token.documents.set({ documents: [doc2] });
-  await setDocuments.run();
+  setDocumentsQ = await token.documents.set({ documents: [doc2] });
+  await setDocumentsQ.run();
 
   docs = await token.documents.get();
   console.log('Final Documents:');
