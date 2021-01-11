@@ -22,7 +22,7 @@ import { getClient } from '~/common/client';
     throw new Error('Please supply an account address as an argument to the script');
   }
 
-  // Account to invite to join to the current identity
+  // Account to invite to join the current Identity
   const targetAccount = await api.getAccount({
     address: accountAddress,
   });
