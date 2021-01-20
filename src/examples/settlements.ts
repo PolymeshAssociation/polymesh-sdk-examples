@@ -43,7 +43,7 @@ import { getClient } from '~/common/client';
         token: 'MY_TOKEN',
       },
     ],
-    endBlock: new BigNumber(49000),
+    endBlock: new BigNumber(10000000),
     validFrom: new Date('12/25/2020'),
   });
 

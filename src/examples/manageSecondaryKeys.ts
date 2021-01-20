@@ -1,4 +1,4 @@
-import { Account } from '@polymathnetwork/polymesh-sdk/api/entities';
+import { Account } from '@polymathnetwork/polymesh-sdk/internal';
 
 import { getClient } from '~/common/client';
 
