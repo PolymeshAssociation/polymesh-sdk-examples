@@ -77,7 +77,7 @@ const renderClaim = ({ target, issuer, issuedAt, expiry, claim }: ClaimData, pos
   const cddClaims = await api.claims.getCddClaims();
 
   console.log('List of CDD claims for the current identity:\n');
-  cddClaims.data.forEach((claim, i) => {
+  cddClaims.forEach((claim, i) => {
     renderClaim(claim, i + 1);
   });
 
