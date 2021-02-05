@@ -48,8 +48,8 @@ import { getClient } from '~/common/client';
         token: 'MY_TOKEN',
       },
     ],
-    endBlock: new BigNumber(49000),
-    validFrom: new Date('12/25/2020'),
+    endBlock: new BigNumber(10000000),
+    tradeDate: new Date('12/25/2020'),
   });
 
   console.log('Creating Instruction...\n');
@@ -61,13 +61,13 @@ import { getClient } from '~/common/client';
   const details = await instruction.details();
   console.log(`Instruction Created! Creation Date: ${details.createdAt}`);
 
-  const auths = await instruction.getAuthorizations();
+  const { data: affirmations } = await instruction.getAffirmations();
 
-  auths.forEach(({ identity, authorizationStatus }) => {
-    console.log(`- Authorizing DID: ${identity.did}\n- Status: ${authorizationStatus}`); // Authorized/Pending/Rejected/Unknown
+  affirmations.forEach(({ identity, status }) => {
+    console.log(`- Authorizing DID: ${identity.did}\n- Status: ${status}`); // Authorized/Pending/Rejected/Unknown
   });
 
-  const legs = await instruction.getLegs();
+  const { data: legs } = await instruction.getLegs();
 
   legs.forEach(({ from, to, amount, token }) => {
     console.log(
@@ -77,7 +77,7 @@ import { getClient } from '~/common/client';
     );
   });
 
-  const authorizeQ = await instruction.authorize(); // will be `affirm` when the 2.3 upgrade is complete
+  const authorizeQ = await instruction.affirm();
 
   await authorizeQ.run();
 
