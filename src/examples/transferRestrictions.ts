@@ -68,9 +68,9 @@ import { getClient } from '~/common/client';
 
   console.log(`There are ${availableSlots} available restriction slots`); // 2
 
-  restrictions.forEach(({ percentage, exempted = [] }, index) => {
+  restrictions.forEach(({ percentage, exemptedScopeIds = [] }, index) => {
     console.log(
-      `Restriction Nº ${index}: percentage: ${percentage.toNumber()}, exempted: ${exempted}`
+      `Restriction Nº ${index}: percentage: ${percentage.toNumber()}, exempted: ${exemptedScopeIds}`
     );
   });
 })();

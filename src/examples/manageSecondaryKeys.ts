@@ -1,4 +1,5 @@
 import { Account } from '@polymathnetwork/polymesh-sdk/internal';
+import { TxGroup } from '@polymathnetwork/polymesh-sdk/types';
 
 import { getClient } from '~/common/client';
 
@@ -27,7 +28,15 @@ import { getClient } from '~/common/client';
     address: accountAddress,
   });
 
-  const inviteAccount = await identity.inviteAccount({ targetAccount });
+  const inviteAccount = await identity.inviteAccount({
+    targetAccount,
+    permissions: {
+      portfolios: null,
+      // `txGroupToTxTags` can be used to know which TxTags correspond to each group
+      transactionGroups: [TxGroup.Issuance, TxGroup.ClaimsManagement],
+      tokens: null,
+    },
+  });
 
   console.log('Sending invitation to an account...');
   await inviteAccount.run();
