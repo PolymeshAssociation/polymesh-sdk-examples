@@ -72,7 +72,7 @@ import { getClient } from '~/common/client';
   console.log(`Portfolios owned with a third party custodian: ${ownedButNotCustodiedPortfolios}`);
 
   // Bob can get all now owned portfolios where he is the custodian
-  // getCustodiedPortfolios retrieve only portfolios owned by a different Identity but custodied by this one
+  // getCustodiedPortfolios retrieves only portfolios owned by a different Identity but custodied by this one
   const custodiedPortfolios = await bob.portfolios.getCustodiedPortfolios();
   console.log(`Custodied Portfolios owned by a third party: ${custodiedPortfolios}`);
 })();
