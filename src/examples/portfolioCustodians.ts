@@ -1,3 +1,5 @@
+import P from 'bluebird';
+
 import { getClient } from '~/common/client';
 
 /* 
@@ -26,16 +28,17 @@ import { getClient } from '~/common/client';
   let portfolioOwner = portfolio.owner;
   console.log(`Portfolio owner is: ${portfolioOwner.did}`);
 
+  let [portfolioCustodian, isOwnedByIdentity, isCustodiedByIdentity] = await Promise.all([
+    portfolio.getCustodian(),
+    portfolio.isOwnedBy({ identity }),
+    portfolio.isCustodiedBy({ identity }),
+  ]);
+
   // In this case portfolioCustodian.did will be identity.did
-  let portfolioCustodian = await portfolio.getCustodian();
   console.log(`Portfolio custodian is: ${portfolioCustodian.did}`);
-
   // In this case it will return true
-  let isOwnedByIdentity = await portfolio.isOwnedBy({ identity });
   console.log(`Portfolio is owned by ${identity.did}: ${isOwnedByIdentity}`);
-
   // In this case it will return true
-  let isCustodiedByIdentity = await portfolio.isCustodiedBy({ identity });
   console.log(`Portfolio is custodied by ${identity.did}: ${isCustodiedByIdentity}`);
 
   // Bob needs to accept the authorization created
@@ -48,26 +51,28 @@ import { getClient } from '~/common/client';
   portfolioOwner = portfolio.owner;
   console.log(`Portfolio owner is: ${portfolioOwner.did}`);
 
+  [portfolioCustodian, isOwnedByIdentity, isCustodiedByIdentity] = await Promise.all([
+    portfolio.getCustodian(),
+    portfolio.isOwnedBy({ identity }),
+    portfolio.isCustodiedBy({ identity }),
+  ]);
+
   // Portfolio custodian is Bob now
-  portfolioCustodian = await portfolio.getCustodian();
   console.log(`Portfolio custodian is: ${portfolioCustodian.did}`);
-
   // It will be true again
-  isOwnedByIdentity = await portfolio.isOwnedBy({ identity });
   console.log(`Portfolio is owned by ${identity.did}: ${isOwnedByIdentity}`);
-
   // It will be false now
-  isCustodiedByIdentity = await portfolio.isCustodiedBy({ identity });
   console.log(`Portfolio is custodied by ${identity.did}: ${isCustodiedByIdentity}`);
 
   // First element is always the default Portfolio
   const [, ...numberedPortfolios] = await identity.portfolios.getPortfolios();
-  const isIncludedInOwned = numberedPortfolios.includes(portfolio); // Portfolio is still owned by current Identity
+  const isIncludedInOwned = numberedPortfolios.some(p => p.id === portfolio.id); // Portfolio is still owned by current Identity
   console.log(`Included in portfolios owned by ${identity.did}: ${isIncludedInOwned}`);
 
   // Identity can filter those portfolios with a third party custodian
-  const ownedButNotCustodiedPortfolios = numberedPortfolios.filter(
-    p => !p.isCustodiedBy({ identity })
+  const ownedButNotCustodiedPortfolios = await P.filter(
+    numberedPortfolios,
+    portfolio => !portfolio.isCustodiedBy({ identity })
   );
   console.log(`Portfolios owned with a third party custodian: ${ownedButNotCustodiedPortfolios}`);
 
