@@ -50,7 +50,7 @@
     "typescript": "3.8.2"
   },
   "dependencies": {
-    "@polymathnetwork/polymesh-sdk": "4.0.0-beta.2",
+    "@polymathnetwork/polymesh-sdk": "5.0.0-beta.16",
     "bignumber.js": "^9.0.0",
     "dotenv": "^8.2.0"
   },
