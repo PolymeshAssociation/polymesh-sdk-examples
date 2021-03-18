@@ -33,11 +33,16 @@ import { getClient } from '~/common/client';
   const createQ = await token.checkpoints.create();
   const newCheckpoint = await createQ.run();
 
+  const [createdAt, totalSupply] = await Promise.all([
+    newCheckpoint.createdAt(),
+    newCheckpoint.totalSupply(),
+  ]);
+
   console.log('New checkpoint has been created:');
   console.log(`- Id: ${newCheckpoint.id}`);
   console.log(`- Ticker: ${newCheckpoint.ticker}`);
-  console.log(`- Created at: ${await newCheckpoint.createdAt()}`);
-  console.log(`- Total supply: ${await newCheckpoint.totalSupply()}`);
+  console.log(`- Created at: ${createdAt}`);
+  console.log(`- Total supply: ${totalSupply}`);
 
   const balanceAtCheckpoint = await newCheckpoint.balance({ identity });
   console.log(`Balance of ${identity.did} at checkpoint: ${balanceAtCheckpoint}`);
@@ -69,8 +74,8 @@ import { getClient } from '~/common/client';
   console.log(`- Next checkpoint date: ${nextCheckpointDate}`);
   console.log(`- Remaining checkpoints: ${remainingCheckpoints}`);
 
-  const checkpointsSchedule = await newSchedule.getCheckpoints();
-  console.log(`- Amount of checkpoints created by schedule: ${checkpointsSchedule}`);
+  const createdCheckpoints = await newSchedule.getCheckpoints();
+  console.log(`- Amount of checkpoints created by schedule: ${createdCheckpoints.length}`);
 
   const schedules = await token.checkpoints.getSchedules();
   console.log(`Current schedules: ${schedules.length}`);

@@ -31,16 +31,16 @@ import { getClient } from '~/common/client';
   console.log(`Portfolio custodian is: ${portfolioCustodian.did}`);
 
   // In this case it will return true
-  let isOwnedByIdentity = portfolio.isOwnedBy({ identity });
+  let isOwnedByIdentity = await portfolio.isOwnedBy({ identity });
   console.log(`Portfolio is owned by ${identity.did}: ${isOwnedByIdentity}`);
 
   // In this case it will return true
-  let isCustodiedByIdentity = portfolio.isCustodiedBy({ identity });
+  let isCustodiedByIdentity = await portfolio.isCustodiedBy({ identity });
   console.log(`Portfolio is custodied by ${identity.did}: ${isCustodiedByIdentity}`);
 
   // Bob needs to accept the authorization created
-  const setPortfolioQ = await portfolio.setCustodian({ targetIdentity: bob });
-  await setPortfolioQ.run();
+  const setCustodianQ = await portfolio.setCustodian({ targetIdentity: bob });
+  await setCustodianQ.run();
 
   // After Bob accepts the authorization
 
@@ -52,12 +52,12 @@ import { getClient } from '~/common/client';
   portfolioCustodian = await portfolio.getCustodian();
   console.log(`Portfolio custodian is: ${portfolioCustodian.did}`);
 
-  // It will be false now
-  isOwnedByIdentity = portfolio.isOwnedBy({ identity });
-  console.log(`Portfolio is owned by ${identity.did}: ${isCustodiedByIdentity}`);
+  // It will be true again
+  isOwnedByIdentity = await portfolio.isOwnedBy({ identity });
+  console.log(`Portfolio is owned by ${identity.did}: ${isOwnedByIdentity}`);
 
-  // It will be true now
-  isCustodiedByIdentity = portfolio.isCustodiedBy({ identity });
+  // It will be false now
+  isCustodiedByIdentity = await portfolio.isCustodiedBy({ identity });
   console.log(`Portfolio is custodied by ${identity.did}: ${isCustodiedByIdentity}`);
 
   // First element is always the default Portfolio
