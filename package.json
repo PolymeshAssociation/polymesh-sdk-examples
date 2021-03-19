@@ -20,6 +20,7 @@
     "@commitlint/cli": "^7.6.1",
     "@commitlint/config-conventional": "^7.6.0",
     "@semantic-release/git": "^8.0.0",
+    "@types/bluebird": "^3.5.33",
     "@types/jest": "^23.3.10",
     "@types/node": "^13.1.8",
     "@typescript-eslint/eslint-plugin": "^2.17.0",
@@ -43,15 +44,16 @@
     "prettier-eslint": "^9.0.1",
     "prettier-eslint-cli": "^5.0.0",
     "semantic-release": "^17.2.3",
-    "tsconfig-paths": "^3.9.0",
     "ts-jest": "^24.3.0",
+    "tsconfig-paths": "^3.9.0",
     "ttypescript": "^1.5.10",
     "typedoc": "^0.16.8",
     "typescript": "3.8.2"
   },
   "dependencies": {
-    "@polymathnetwork/polymesh-sdk": "4.0.0-beta.2",
+    "@polymathnetwork/polymesh-sdk": "5.0.0-beta.16",
     "bignumber.js": "^9.0.0",
+    "bluebird": "^3.7.2",
     "dotenv": "^8.2.0"
   },
   "config": {
