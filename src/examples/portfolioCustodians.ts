@@ -80,4 +80,6 @@ import { getClient } from '~/common/client';
   // getCustodiedPortfolios retrieves only portfolios owned by a different Identity but custodied by this one
   const custodiedPortfolios = await bob.portfolios.getCustodiedPortfolios();
   console.log(`Custodied Portfolios owned by a third party: ${custodiedPortfolios}`);
+
+  await api.disconnect();
 })();

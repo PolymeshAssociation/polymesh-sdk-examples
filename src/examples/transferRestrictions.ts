@@ -73,4 +73,6 @@ import { getClient } from '~/common/client';
       `Restriction Nº ${index}: percentage: ${percentage.toNumber()}, exempted: ${exemptedScopeIds}`
     );
   });
+
+  await api.disconnect();
 })();

@@ -56,7 +56,7 @@ import { getClient } from '~/common/client';
   const checkpoints = await token.checkpoints.get();
   console.log(`Current checkpoints: ${checkpoints.length}`);
 
-  const createScheduleQ = await token.checkpoints.createSchedule({
+  const createScheduleQ = await token.checkpoints.schedules.create({
     start: new Date(),
     period: { unit: CalendarUnit.Week, amount: 1 },
     repetitions: 5,
@@ -77,12 +77,14 @@ import { getClient } from '~/common/client';
   const createdCheckpoints = await newSchedule.getCheckpoints();
   console.log(`- Amount of checkpoints created by schedule: ${createdCheckpoints.length}`);
 
-  const schedules = await token.checkpoints.getSchedules();
+  const schedules = await token.checkpoints.schedules.get();
   console.log(`Current schedules: ${schedules.length}`);
 
-  const removeScheduleQ = await token.checkpoints.removeSchedule({
+  const removeScheduleQ = await token.checkpoints.schedules.remove({
     schedule: schedules[0].schedule,
   });
   await removeScheduleQ.run();
   console.log('Schedule has been deleted:');
+
+  await api.disconnect();
 })();

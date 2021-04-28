@@ -102,4 +102,6 @@ const renderClaim = ({ target, issuer, issuedAt, expiry, claim }: ClaimData, pos
   issuedClaims.data.forEach((claim, i) => {
     renderClaim(claim, i + 1);
   });
+
+  await api.disconnect();
 })();

@@ -98,4 +98,6 @@ import { getClient } from '~/common/client';
   // Close
   const closeQ = await sto.close();
   await closeQ.run();
+
+  await api.disconnect();
 })();

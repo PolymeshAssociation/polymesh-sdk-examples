@@ -89,4 +89,6 @@ import { getClient } from '~/common/client';
     const rejectQ = await instruction.reject();
     await rejectQ.run();
   */
+
+  await api.disconnect();
 })();

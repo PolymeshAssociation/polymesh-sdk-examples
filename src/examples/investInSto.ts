@@ -48,4 +48,6 @@ import { getClient } from '~/common/client';
   });
 
   await investQ.run();
+
+  await api.disconnect();
 })();

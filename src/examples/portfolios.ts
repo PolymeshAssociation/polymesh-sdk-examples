@@ -37,4 +37,6 @@ import { getClient } from '~/common/client';
 
   const deleteQ = await numberedPortfolios[0].delete(); // Will throw an error if the Portfolio has any assets
   await deleteQ.run();
+
+  await api.disconnect();
 })();

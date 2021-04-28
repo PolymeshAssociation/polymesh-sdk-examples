@@ -69,4 +69,6 @@ import { getClient } from '~/common/client';
       console.log(`- Type: Account, Value: ${signer.did}`);
     }
   });
+
+  await api.disconnect();
 })();

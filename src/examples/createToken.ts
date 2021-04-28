@@ -80,4 +80,6 @@ import { getClient } from '~/common/client';
   docs.data.forEach(({ name }) => {
     console.log(`- ${name}`);
   });
+
+  await api.disconnect();
 })();
