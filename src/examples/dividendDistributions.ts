@@ -43,7 +43,7 @@ import { getClient } from '~/common/client';
     perShare: new BigNumber(100),
     maxAmount: new BigNumber(5000000),
     paymentDate: new Date(new Date().getTime() * 1000 * 60 * 60 * 24 * 30), // 30 days from now
-    expiryDate: null, // means the distribution doesn't expire
+    // expiryDate: undefined, means the distribution doesn't expire
     declarationDate: new Date('10/14/2020'),
     description: 'Gonna throw some money around',
     targets: {
@@ -60,7 +60,7 @@ import { getClient } from '~/common/client';
   });
   const distribution = await createQ.run();
 
-  const [{ checkpoint }] = await token.checkpoints.get();
+  const [{ checkpoint }] = (await token.checkpoints.get()).data;
 
   // the Checkpoint can be modified before the payment date
   const modifyCheckpointQ = await distribution.modifyCheckpoint({ checkpoint });

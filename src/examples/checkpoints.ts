@@ -54,7 +54,7 @@ import { getClient } from '~/common/client';
   });
 
   const checkpoints = await token.checkpoints.get();
-  console.log(`Current checkpoints: ${checkpoints.length}`);
+  console.log(`Current checkpoints: ${checkpoints.data.length}`);
 
   const createScheduleQ = await token.checkpoints.schedules.create({
     start: new Date(),
