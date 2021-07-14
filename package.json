@@ -51,7 +51,7 @@
     "typescript": "3.8.2"
   },
   "dependencies": {
-    "@polymathnetwork/polymesh-sdk": "6.0.0",
+    "@polymathnetwork/polymesh-sdk": "7.0.0-alpha.3",
     "bignumber.js": "^9.0.0",
     "bluebird": "^3.7.2",
     "dotenv": "^8.2.0"

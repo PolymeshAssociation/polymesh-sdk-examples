@@ -44,9 +44,12 @@ import { getClient } from '~/common/client';
   console.log('Creating Security Token...\n');
   const token = await creationQ.run();
 
-  const { primaryIssuanceAgent } = await token.details();
+  const { primaryIssuanceAgents } = await token.details();
 
-  console.log(`Token created! Primary Issuance Agent: ${primaryIssuanceAgent?.did}\n`);
+  console.log('Token created! Primary Issuance Agents:');
+  primaryIssuanceAgents.forEach(({ did }) => {
+    console.log(`${did}`);
+  });
 
   console.log(`Assigning a list of documents to ${ticker}...\n`);
 

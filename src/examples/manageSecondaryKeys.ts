@@ -52,6 +52,22 @@ import { getClient } from '~/common/client';
     }
   });
 
+  if (signingKeys.length) {
+    const modifyPermissions = await identity.modifyPermissions({
+      secondaryKeys: [
+        {
+          signer: signingKeys[0].signer,
+          permissions: {
+            portfolios: null,
+          },
+        },
+      ],
+    });
+
+    console.log('Modifying portfolios permissions to a secondary key...');
+    await modifyPermissions.run();
+  }
+
   const removeKeysQ = await identity.removeSecondaryKeys({
     signers: signingKeys.slice(0, 1).map(({ signer }) => signer),
   });
