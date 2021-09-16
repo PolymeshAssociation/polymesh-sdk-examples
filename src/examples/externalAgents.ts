@@ -40,7 +40,7 @@ import { getClient } from '~/common/client';
   const createGroupQ = await token.permissions.createGroup({
     permissions: {
       transactions: {
-        values: [AssetTx.Transfer],
+        values: [AssetTx.Freeze],
         type: PermissionType.Include,
       },
       transactionGroups: [TxGroup.PortfolioManagement],
@@ -90,8 +90,14 @@ import { getClient } from '~/common/client';
 
   // Invites an Identity to be an Agent
 
+  /**
+   * @note this may create an Authorization Requests which have to be accepted by
+   *   the corresponding target. An Identity can
+   *   fetch its pending Authorization Requests by calling `authorizations.getReceived`
+   */
+  const bobIdentity = '0x123';
   const inviteAgentQ = await token.permissions.inviteAgent({
-    target: '0x123',
+    target: bobIdentity,
     permissions: newGroup,
     // permissions: {
     //   transactions: {
@@ -118,10 +124,25 @@ import { getClient } from '~/common/client';
   // Revokes an Agent's permissions
 
   const removeAgentQ = await token.permissions.removeAgent({
-    target: '0x123',
+    target: bobIdentity,
   });
   console.log('Revoking agent...');
   await removeAgentQ.run();
+
+  // Retrieves an Identity's Permission Group for a specific Security Token
+
+  const group = await identity.tokenPermissions.getGroup({
+    token: 'FAKETOKEN',
+  });
+  console.log(`FAKETOKEN - ${'type' in group ? group.type : group.id}`);
+
+  // Assigns an Identity to a different Permission Group
+
+  const setGroupQ = await identity.tokenPermissions.setGroup({
+    group,
+  });
+  console.log('Assigning...');
+  await setGroupQ.run();
 
   // Retrieves all the Security Tokens over which this Identity has permissions
 
@@ -139,13 +160,6 @@ import { getClient } from '~/common/client';
     })
   );
 
-  // Retrieves an Identity's Permission Group for a specific Security Token
-
-  const group = await identity.tokenPermissions.getGroup({
-    token: 'FAKETOKEN',
-  });
-  console.log(`FAKETOKEN - ${'type' in group ? group.type : group.id}`);
-
   // Abdicates from the current Permissions Group for a given Security Token
 
   const waiveQ = await identity.tokenPermissions.waive({
@@ -153,14 +167,6 @@ import { getClient } from '~/common/client';
   });
   console.log('Abdicating...');
   await waiveQ.run();
-
-  // Assigns an Identity to a different Permission Group
-
-  const setGroupQ = await identity.tokenPermissions.setGroup({
-    group,
-  });
-  console.log('Assigning...');
-  await setGroupQ.run();
 
   await api.disconnect();
 })();
