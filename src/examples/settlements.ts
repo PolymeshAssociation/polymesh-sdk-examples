@@ -1,5 +1,5 @@
+import { BigNumber } from '@polymathnetwork/polymesh-sdk';
 import { VenueType } from '@polymathnetwork/polymesh-sdk/types';
-import BigNumber from 'bignumber.js';
 
 import { getClient } from '~/common/client';
 
