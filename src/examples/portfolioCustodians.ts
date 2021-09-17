@@ -15,7 +15,7 @@ import { getClient } from '~/common/client';
   const api = await getClient(process.env.ACCOUNT_SEED);
 
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  const bob = api.getIdentity({ did: process.env.BOB_DID! });
+  const bob = await api.getIdentity({ did: process.env.BOB_DID! });
 
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const identity = (await api.getCurrentIdentity())!;

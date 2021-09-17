@@ -1,4 +1,4 @@
-import { AssetTx, ModuleName } from '@polymathnetwork/polymesh-sdk/polkadot/types';
+import { AssetTx } from '@polymathnetwork/polymesh-sdk/polkadot/types';
 import { PermissionType, TxGroup } from '@polymathnetwork/polymesh-sdk/types';
 import P from 'bluebird';
 
@@ -48,16 +48,16 @@ import { getClient } from '~/common/client';
     // permissions: {
     //   transactions: {
     //     values: [ModuleName.Asset],
-    //     exceptions: [AssetTx.Freeze],
-    //     type: PermissionType.Include
+    //     type: PermissionType.Include,
+    //     exceptions: [AssetTx.Freeze]
     //   },
     //   transactionGroups: [TxGroup.PortfolioManagement]
     // }
     // permissions: {
     //   transactions: {
     //     values: [ModuleName.Asset],
-    //     exceptions: [AssetTx.Freeze],
-    //     type: PermissionType.Exclude
+    //     type: PermissionType.Exclude,
+    //     exceptions: [AssetTx.Freeze]
     //   }
     // }
   });

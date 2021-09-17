@@ -35,7 +35,7 @@ import { getClient } from '~/common/client';
   // const venues = await identity.getVenues();
 
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  const bob = api.getIdentity({ did: process.env.BOB_DID! });
+  const bob = await api.getIdentity({ did: process.env.BOB_DID! });
 
   const destinationPortfolio = await bob.portfolios.getPortfolio({ portfolioId: new BigNumber(3) });
 

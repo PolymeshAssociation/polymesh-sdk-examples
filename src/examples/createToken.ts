@@ -49,12 +49,12 @@ import { getClient } from '~/common/client';
   const doc1 = {
     name: 'Document One',
     uri: 'https://some.web/one',
-    contentHash: 'someHash',
+    contentHash: '0x01',
   };
   const doc2 = {
     name: 'Document Two',
     uri: 'https://some.web/two',
-    contentHash: 'someHash',
+    contentHash: '0x02',
   };
 
   let setDocumentsQ = await token.documents.set({ documents: [doc1, doc2] });
