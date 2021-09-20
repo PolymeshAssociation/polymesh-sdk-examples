@@ -1,5 +1,5 @@
+import { BigNumber } from '@polymathnetwork/polymesh-sdk';
 import { KnownTokenType } from '@polymathnetwork/polymesh-sdk/types';
-import BigNumber from 'bignumber.js';
 
 import { getClient } from '~/common/client';
 
@@ -44,24 +44,17 @@ import { getClient } from '~/common/client';
   console.log('Creating Security Token...\n');
   const token = await creationQ.run();
 
-  const { primaryIssuanceAgents } = await token.details();
-
-  console.log('Token created! Primary Issuance Agents:');
-  primaryIssuanceAgents.forEach(({ did }) => {
-    console.log(`${did}`);
-  });
-
   console.log(`Assigning a list of documents to ${ticker}...\n`);
 
   const doc1 = {
     name: 'Document One',
     uri: 'https://some.web/one',
-    contentHash: 'someHash',
+    contentHash: '0x01',
   };
   const doc2 = {
     name: 'Document Two',
     uri: 'https://some.web/two',
-    contentHash: 'someHash',
+    contentHash: '0x02',
   };
 
   let setDocumentsQ = await token.documents.set({ documents: [doc1, doc2] });
