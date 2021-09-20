@@ -1,6 +1,6 @@
+import { BigNumber } from '@polymathnetwork/polymesh-sdk';
 import { Checkpoint } from '@polymathnetwork/polymesh-sdk/internal';
 import { TargetTreatment } from '@polymathnetwork/polymesh-sdk/types';
-import BigNumber from 'bignumber.js';
 
 import { getClient } from '~/common/client';
 

@@ -1,9 +1,9 @@
+import { BigNumber } from '@polymathnetwork/polymesh-sdk';
 import {
   StoBalanceStatus,
   StoSaleStatus,
   StoTimingStatus,
 } from '@polymathnetwork/polymesh-sdk/types';
-import BigNumber from 'bignumber.js';
 
 import { getClient } from '~/common/client';
 
