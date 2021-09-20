@@ -29,10 +29,12 @@ import { getClient } from '~/common/client';
     });
   }
 
+  const target = await api.getIdentity({
+    did: '0x1906c0a0f58364d3f71c4e94e1361af9810666445564840c96f9f1a965cf6045',
+  });
+
   const setCorporateActionsAgent = await token.corporateActions.setAgent({
-    target: api.getIdentity({
-      did: '0x1906c0a0f58364d3f71c4e94e1361af9810666445564840c96f9f1a965cf6045',
-    }),
+    target,
   });
 
   console.log('Assigning a new corporate actions agent for the Security Token...');
