@@ -8,7 +8,7 @@ let api: Polymesh;
 export async function getClient(mnemonic?: string): Promise<Polymesh> {
   if (!api) {
     api = await Polymesh.connect({
-      nodeUrl: 'wss://itn-rpc.polymesh.live',
+      nodeUrl: 'wss://pmf.polymath.network',
       accountUri: mnemonic ?? '//Alice',
       middleware: {
         /* eslint-disable @typescript-eslint/no-non-null-assertion */
