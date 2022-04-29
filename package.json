@@ -1,7 +1,7 @@
 {
-  "name": "typescript-repo-template",
+  "name": "polymesh-sdk-examples",
   "version": "0.0.0",
-  "description": "Template repository for typescript projects",
+  "description": "Example project that demonstrate how to use Polymesh SDK",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "author": "Polymath Studios Inc.",
@@ -51,7 +51,8 @@
     "typescript": "3.8.2"
   },
   "dependencies": {
-    "@polymathnetwork/polymesh-sdk": "10.0.0-beta.2",
+    "@polymathnetwork/local-signing-manager": "^1.0.5",
+    "@polymathnetwork/polymesh-sdk": "14.0.0",
     "bluebird": "^3.7.2",
     "dotenv": "^8.2.0"
   },

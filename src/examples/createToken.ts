@@ -1,13 +1,13 @@
 import { BigNumber } from '@polymathnetwork/polymesh-sdk';
-import { KnownTokenType } from '@polymathnetwork/polymesh-sdk/types';
+import { KnownAssetType } from '@polymathnetwork/polymesh-sdk/types';
 
 import { getClient } from '~/common/client';
 
 /* 
-  This script showcases Security Token related functonality. It: 
-    - Reserves a Security Token with the specified ticker
+  This script showcases Asset related functionality. It: 
+    - Reserves a Asset with the specified ticker
     - Creates it
-    - Assigns a list of documents to the Security Token
+    - Assigns a list of documents to the Asset
     - Removes a document from the current list
 */
 (async (): Promise<void> => {
@@ -15,8 +15,8 @@ import { getClient } from '~/common/client';
   const api = await getClient(process.env.ACCOUNT_SEED);
 
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  const identity = (await api.getCurrentIdentity())!;
-  console.log(`Connected! Current identity ID: ${identity.did}`);
+  const identity = (await api.getSigningIdentity())!;
+  console.log(`Connected! Signing Identity ID: ${identity.did}`);
 
   const ticker = process.argv[2];
 
@@ -24,7 +24,7 @@ import { getClient } from '~/common/client';
     throw new Error('Please supply a ticker as an argument to the script');
   }
 
-  const reservationQ = await api.reserveTicker({
+  const reservationQ = await api.assets.reserveTicker({
     ticker,
   });
 
@@ -34,15 +34,16 @@ import { getClient } from '~/common/client';
   console.log('Ticker reserved!');
   console.log(`Details:\n- Owner: ${owner?.did}\n- Expiry Date: ${expiryDate}\n`);
 
-  const creationQ = await reservation.createToken({
+  const creationQ = await reservation.createAsset({
     name: 'Test',
     isDivisible: true,
-    tokenType: KnownTokenType.EquityCommon,
-    totalSupply: new BigNumber(3000),
+    assetType: KnownAssetType.EquityCommon,
+    initialSupply: new BigNumber(3000),
+    requireInvestorUniqueness: false,
   });
 
-  console.log('Creating Security Token...\n');
-  const token = await creationQ.run();
+  console.log('Creating Asset...\n');
+  const asset = await creationQ.run();
 
   console.log(`Assigning a list of documents to ${ticker}...\n`);
 
@@ -57,10 +58,10 @@ import { getClient } from '~/common/client';
     contentHash: '0x02',
   };
 
-  let setDocumentsQ = await token.documents.set({ documents: [doc1, doc2] });
+  let setDocumentsQ = await asset.documents.set({ documents: [doc1, doc2] });
   await setDocumentsQ.run();
 
-  let docs = await token.documents.get();
+  let docs = await asset.documents.get();
   console.log('Added documents:');
   docs.data.forEach(({ name }) => {
     console.log(`- ${name}`);
@@ -68,10 +69,11 @@ import { getClient } from '~/common/client';
 
   console.log('\nRemoving Document One...\n');
 
-  setDocumentsQ = await token.documents.set({ documents: [doc2] });
+  setDocumentsQ = await asset.documents.set({ documents: [doc2] });
   await setDocumentsQ.run();
 
-  docs = await token.documents.get();
+  docs = await asset.documents.get();
+
   console.log('Final Documents:');
   docs.data.forEach(({ name }) => {
     console.log(`- ${name}`);
