@@ -2,5 +2,23 @@
   "typescript.preferences.importModuleSpecifier": "non-relative",
   "typescript.tsdk": "node_modules/typescript/lib",
   "editor.tabSize": 2,
-  "editor.formatOnSave": true
+  "editor.formatOnSave": true,
+  "cSpell.ignorePaths": [
+    "package.json",
+    "yarn.lock",
+    "node_modules",
+    "vscode-extension",
+    ".git/objects",
+    ".vscode"
+  ],
+  "cSpell.ignoreRegExpList": [
+    "/from\\s+(['\"]).*\\1/", // ignore imports
+    "/// TODO @\\w+/", // ignore github handles in TODOs
+    "/0x.+/" // ignore hex values
+  ],
+  "cSpell.words": [
+    "Polymesh",
+    "polymathnetwork",
+    "Custodied",
+  ]
 }

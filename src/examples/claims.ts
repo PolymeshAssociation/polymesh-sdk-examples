@@ -17,7 +17,7 @@ const renderClaim = ({ target, issuer, issuedAt, expiry, claim }: ClaimData, pos
 };
 
 /* 
-  This script showcases Claim related functonality. It:    
+  This script showcases Claim related functionality. It:    
     - Add a claim
     - Revoke a claim
     - Get CDD claims
@@ -30,8 +30,8 @@ const renderClaim = ({ target, issuer, issuedAt, expiry, claim }: ClaimData, pos
   const api = await getClient(process.env.ACCOUNT_SEED);
 
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  const identity = (await api.getCurrentIdentity())!;
-  console.log(`Connected! Current identity ID: ${identity.did}`);
+  const identity = (await api.getSigningIdentity())!;
+  console.log(`Connected! Signing Identity ID: ${identity.did}`);
 
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const bobDid = process.env.BOB_DID!;
@@ -76,14 +76,14 @@ const renderClaim = ({ target, issuer, issuedAt, expiry, claim }: ClaimData, pos
 
   const cddClaims = await api.claims.getCddClaims();
 
-  console.log('List of CDD claims for the current identity:\n');
+  console.log('List of CDD claims for the signing Identity:\n');
   cddClaims.forEach((claim, i) => {
     renderClaim(claim, i + 1);
   });
 
   const investorUniquenessClaims = await api.claims.getInvestorUniquenessClaims();
 
-  console.log('List of InvestorUniqueness claims for the current identity:\n');
+  console.log('List of InvestorUniqueness claims for the signing Identity:\n');
   investorUniquenessClaims.forEach((claim, i) => {
     renderClaim(claim, i + 1);
   });

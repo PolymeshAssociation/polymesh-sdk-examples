@@ -3,7 +3,7 @@ import P from 'bluebird';
 import { getClient } from '~/common/client';
 
 /* 
-  This script showcases Portfolio's Custodian related functonality. It:    
+  This script showcases Portfolio's Custodian related functionality. It:    
     - Creates a Portfolio
     - Fetches owner and Custodian for that Portfolio
     - Sets a different Custodian to that Portfolio
@@ -15,13 +15,13 @@ import { getClient } from '~/common/client';
   const api = await getClient(process.env.ACCOUNT_SEED);
 
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  const bob = await api.getIdentity({ did: process.env.BOB_DID! });
+  const bob = await api.identities.getIdentity({ did: process.env.BOB_DID! });
 
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  const identity = (await api.getCurrentIdentity())!;
-  console.log(`Connected! Current identity ID: ${identity.did}`);
+  const identity = (await api.getSigningIdentity())!;
+  console.log(`Connected! Signing Identity ID: ${identity.did}`);
 
-  const portfolioQ = await identity.portfolios.create({ name: 'MY_PORTFOLIO' });
+  const portfolioQ = await api.identities.createPortfolio({ name: 'MY_PORTFOLIO' });
   const portfolio = await portfolioQ.run();
 
   // In this case portfolioOwner.did will be identity.did
@@ -66,7 +66,7 @@ import { getClient } from '~/common/client';
 
   // First element is always the default Portfolio
   const [, ...numberedPortfolios] = await identity.portfolios.getPortfolios();
-  const isIncludedInOwned = numberedPortfolios.some(p => p.id === portfolio.id); // Portfolio is still owned by current Identity
+  const isIncludedInOwned = numberedPortfolios.some(p => p.id === portfolio.id); // Portfolio is still owned by signing Identity
   console.log(`Included in portfolios owned by ${identity.did}: ${isIncludedInOwned}`);
 
   // Identity can filter those portfolios with a third party custodian

@@ -3,12 +3,12 @@ import { BigNumber } from '@polymathnetwork/polymesh-sdk';
 import { getClient } from '~/common/client';
 
 /* 
-  This script showcases Transfer Restriction related functonality. It: 
-    - Adds a count restriction to a Security Token
-    - Adds a percentage restriction to the Token
-    - Sets (deletes existing and adds new) percentage restrictions on the Token
-    - Removes all count restrictions from the Token
-    - Fetches all percentage restrictions on the Token
+  This script showcases Transfer Restriction related functionality. It: 
+    - Adds a count restriction to a Asset
+    - Adds a percentage restriction to the Asset
+    - Sets (deletes existing and adds new) percentage restrictions on the Asset
+    - Removes all count restrictions from the Asset
+    - Fetches all percentage restrictions on the Asset
 */
 (async (): Promise<void> => {
   console.log('Connecting to the node...\n\n');
@@ -20,9 +20,9 @@ import { getClient } from '~/common/client';
     throw new Error('Please supply a ticker as an argument to the script');
   }
 
-  const token = await api.getSecurityToken({ ticker });
+  const asset = await api.assets.getAsset({ ticker });
 
-  const addCountRestrictionQ = await token.transferRestrictions.count.addRestriction({
+  const addCountRestrictionQ = await asset.transferRestrictions.count.addRestriction({
     count: new BigNumber(10),
     // unique investor scope IDs can be exempted from the restriction
     // exempted: ['SOME_SCOPE_ID']
@@ -32,7 +32,7 @@ import { getClient } from '~/common/client';
 
   console.log(`Count restriction added! There are now ${restrictionAmount} restrictions`); // 1
 
-  const addPercentageRestrictionQ = await token.transferRestrictions.percentage.addRestriction({
+  const addPercentageRestrictionQ = await asset.transferRestrictions.percentage.addRestriction({
     percentage: new BigNumber(35),
   });
 
@@ -41,7 +41,7 @@ import { getClient } from '~/common/client';
   console.log(`Percentage restriction added! There are now ${restrictionAmount} restrictions`); // 2
 
   // throws an error if setting these restrictions would surpass the maximum amount of restrictions
-  const setPercentageRestrictionsQ = await token.transferRestrictions.percentage.setRestrictions({
+  const setPercentageRestrictionsQ = await asset.transferRestrictions.percentage.setRestrictions({
     restrictions: [
       {
         percentage: new BigNumber(25),
@@ -58,19 +58,19 @@ import { getClient } from '~/common/client';
 
   console.log(`Percentage restrictions set! There are now ${restrictionAmount} restrictions`); // 3
 
-  const removeCountRestrictionsQ = await token.transferRestrictions.count.removeRestrictions();
+  const removeCountRestrictionsQ = await asset.transferRestrictions.count.removeRestrictions();
 
   restrictionAmount = await removeCountRestrictionsQ.run();
 
   console.log(`Count restrictions removed! There are now ${restrictionAmount} restrictions`); // 2
 
-  const { availableSlots, restrictions } = await token.transferRestrictions.percentage.get();
+  const { availableSlots, restrictions } = await asset.transferRestrictions.percentage.get();
 
   console.log(`There are ${availableSlots} available restriction slots`); // 2
 
-  restrictions.forEach(({ percentage, exemptedScopeIds = [] }, index) => {
+  restrictions.forEach(({ percentage, exemptedIds = [] }, index) => {
     console.log(
-      `Restriction Nº ${index}: percentage: ${percentage.toNumber()}, exempted: ${exemptedScopeIds}`
+      `Restriction Nº ${index}: percentage: ${percentage.toNumber()}, exempted: ${exemptedIds}`
     );
   });
 

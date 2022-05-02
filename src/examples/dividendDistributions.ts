@@ -5,7 +5,7 @@ import { TargetTreatment } from '@polymathnetwork/polymesh-sdk/types';
 import { getClient } from '~/common/client';
 
 /* 
-  This script showcases Dividend Distribution related functonality. It: 
+  This script showcases Dividend Distribution related functionality. It: 
     - Creates a Dividend Distribution
     - Modifies its Checkpoint
     - Fetches the new Checkpoint
@@ -21,8 +21,8 @@ import { getClient } from '~/common/client';
   const api = await getClient(process.env.ACCOUNT_SEED);
 
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  const identity = (await api.getCurrentIdentity())!;
-  console.log(`Connected! Current identity ID: ${identity.did}`);
+  const identity = (await api.getSigningIdentity())!;
+  console.log(`Connected! Signing Identity ID: ${identity.did}`);
 
   const ticker = process.argv[2];
 
@@ -30,13 +30,13 @@ import { getClient } from '~/common/client';
     throw new Error('Please supply a ticker as an argument to the script');
   }
 
-  const token = await api.getSecurityToken({ ticker });
-  console.log(`Security Token found! Current token name is: ${(await token.details()).name}`);
+  const asset = await api.assets.getAsset({ ticker });
+  console.log(`Asset found! Current asset name is: ${(await asset.details()).name}`);
 
   const originPortfolio = await identity.portfolios.getPortfolio({ portfolioId: new BigNumber(1) });
 
   // this creates a Corporate Action under the hood and then uses it to create the Dividend Distribution
-  const createQ = await token.corporateActions.distributions.configureDividendDistribution({
+  const createQ = await asset.corporateActions.distributions.configureDividendDistribution({
     checkpoint: new Date(new Date().getTime() + 1000 * 60 * 20), // can also be a Checkpoint or a CheckpointSchedule
     originPortfolio, // optional, defaults to the CAA's default portfolio
     currency: 'USD',
@@ -60,7 +60,7 @@ import { getClient } from '~/common/client';
   });
   const distribution = await createQ.run();
 
-  const [{ checkpoint }] = (await token.checkpoints.get()).data;
+  const [{ checkpoint }] = (await asset.checkpoints.get()).data;
 
   // the Checkpoint can be modified before the payment date
   const modifyCheckpointQ = await distribution.modifyCheckpoint({ checkpoint });
@@ -93,7 +93,7 @@ import { getClient } from '~/common/client';
   });
   await paymentQ.run();
 
-  // claim Dividend payment for the current Identity
+  // claim Dividend payment for the signing Identity
   const claimQ = await distribution.claim();
   await claimQ.run();
 
@@ -101,8 +101,8 @@ import { getClient } from '~/common/client';
   const reclaimQ = await distribution.reclaimFunds();
   await reclaimQ.run();
 
-  // fetch all distributions for the Token
-  const allDistributions = await token.corporateActions.distributions.get();
+  // fetch all distributions for the Asset
+  const allDistributions = await asset.corporateActions.distributions.get();
   allDistributions.forEach(({ distribution: dist, details }) => {
     console.log(`Distribution ${dist.id.toFormat()}:
       - Funds reclaimed: ${details.fundsReclaimed}

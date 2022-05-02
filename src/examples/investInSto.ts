@@ -1,15 +1,15 @@
 import { BigNumber } from '@polymathnetwork/polymesh-sdk';
 import {
-  StoBalanceStatus,
-  StoSaleStatus,
-  StoTimingStatus,
+  OfferingBalanceStatus,
+  OfferingSaleStatus,
+  OfferingTimingStatus,
 } from '@polymathnetwork/polymesh-sdk/types';
 
 import { getClient } from '~/common/client';
 
 /* 
-  This script showcases STO investment functionality. It:
-  - Fetches all STOs for a Token
+  This script showcases Offering investment functionality. It:
+  - Fetches all Offerings for a Asset
   - Invests in one of them
 */
 (async (): Promise<void> => {
@@ -23,24 +23,24 @@ import { getClient } from '~/common/client';
   }
 
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  const identity = (await api.getCurrentIdentity())!;
-  const token = await api.getSecurityToken({ ticker });
+  const identity = (await api.getSigningIdentity())!;
+  const asset = await api.assets.getAsset({ ticker });
 
   const fundingPortfolio = await identity.portfolios.getPortfolio();
   const purchasePortfolio = await identity.portfolios.getPortfolio({
     portfolioId: new BigNumber(2),
   });
 
-  const [{ sto }] = await token.offerings.get({
+  const [{ offering }] = await asset.offerings.get({
     status: {
-      timing: StoTimingStatus.Started,
-      sale: StoSaleStatus.Live,
-      balance: StoBalanceStatus.Available,
+      timing: OfferingTimingStatus.Started,
+      sale: OfferingSaleStatus.Live,
+      balance: OfferingBalanceStatus.Available,
     },
   });
 
   // Invest
-  const investQ = await sto.invest({
+  const investQ = await offering.invest({
     purchasePortfolio,
     fundingPortfolio,
     purchaseAmount: new BigNumber(100),

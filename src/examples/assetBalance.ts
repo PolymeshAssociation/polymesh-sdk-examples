@@ -2,7 +2,7 @@ import { getClient } from '~/common/client';
 
 /* 
   This script retrieves the balance of a specific asset
-    held by the current identity
+    held by the signing Identity
 */
 (async (): Promise<void> => {
   console.log('Connecting to the node...\n\n');
@@ -15,10 +15,12 @@ import { getClient } from '~/common/client';
   }
 
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  const identity = (await api.getCurrentIdentity())!;
-  console.log(`Connected! Current identity ID: ${identity.did}`);
+  const identity = (await api.getSigningIdentity())!;
+  console.log(`Connected! Signing Identity ID: ${identity.did}`);
 
-  const balance = await identity.getTokenBalance({ ticker });
+  const balance = await identity.getAssetBalance({ ticker });
 
   console.log(`Balance of "${ticker}" is ${balance.toFormat()}`);
+
+  await api.disconnect();
 })();

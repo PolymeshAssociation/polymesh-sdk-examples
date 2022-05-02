@@ -3,8 +3,8 @@ import { BigNumber } from '@polymathnetwork/polymesh-sdk';
 import { getClient } from '~/common/client';
 
 /* 
-  This script showcases STO functionality. It:
-  - Launches an STO
+  This script showcases Offering functionality. It:
+  - Launches an Offering
   - Fetches its details
   - Fetches all investments made to date
   - Modifies the start and end time
@@ -22,8 +22,8 @@ import { getClient } from '~/common/client';
   }
 
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  const identity = (await api.getCurrentIdentity())!;
-  const token = await api.getSecurityToken({ ticker });
+  const identity = (await api.getSigningIdentity())!;
+  const asset = await api.assets.getAsset({ ticker });
   const [venue] = await identity.getVenues();
 
   const offeringPortfolio = await identity.portfolios.getPortfolio();
@@ -32,11 +32,11 @@ import { getClient } from '~/common/client';
   });
 
   // Launch
-  const launchStoQ = await token.offerings.launch({
+  const launchOfferingQ = await asset.offerings.launch({
     offeringPortfolio, // optional, defaults to the PIA's default portfolio
     raisingPortfolio,
     raisingCurrency: 'USD_STABLECOIN',
-    venue, // optional, defaults to the first "Sto" type venue created by the owner of the Offering Portfolio
+    venue, // optional, defaults to the first "Offering" type venue created by the owner of the Offering Portfolio
     name: 'MY_STO',
     start: new Date(new Date().getTime() + 60 * 1000 * 20), // optional, defaults to right now
     end: new Date(new Date().getTime() + 365 * 24 * 60 * 60 * 1000), // optional, defaults to never
@@ -53,23 +53,23 @@ import { getClient } from '~/common/client';
     minInvestment: new BigNumber(750),
   });
 
-  // existing STOs can also later be fetched with `token.offerings.get()`
-  const sto = await launchStoQ.run();
+  // existing STOs can also later be fetched with `asset.offerings.get()`
+  const offering = await launchOfferingQ.run();
 
-  console.log(`STO created! ID: ${sto.id}`);
+  console.log(`Offering created! ID: ${offering.id}`);
 
   // Fetch details
-  const { totalRemaining, status } = await sto.details();
+  const { totalRemaining, status } = await offering.details();
 
-  console.log(`STO status:
+  console.log(`Offering status:
   - balance: ${status.balance}
   - sale: ${status.sale}
   - timing: ${status.timing}
   
-  Total remaining tokens: ${totalRemaining.toFormat()}`);
+  Total remaining assets: ${totalRemaining.toFormat()}`);
 
   // Fetch investments
-  const { data: investments } = await sto.getInvestments();
+  const { data: investments } = await offering.getInvestments();
 
   investments.forEach(({ soldAmount, investedAmount, investor }) => {
     console.log(
@@ -80,7 +80,7 @@ import { getClient } from '~/common/client';
   });
 
   // Modify start/end time
-  const modifyTimesQ = await sto.modifyTimes({
+  const modifyTimesQ = await offering.modifyTimes({
     start: new Date(new Date().getTime() + 30 * 1000),
     end: null,
   });
@@ -88,15 +88,15 @@ import { getClient } from '~/common/client';
   await modifyTimesQ.run();
 
   // Freeze
-  const freezeQ = await sto.freeze();
+  const freezeQ = await offering.freeze();
   await freezeQ.run();
 
   // Unfreeze
-  const unfreezeQ = await sto.unfreeze();
+  const unfreezeQ = await offering.unfreeze();
   await unfreezeQ.run();
 
   // Close
-  const closeQ = await sto.close();
+  const closeQ = await offering.close();
   await closeQ.run();
 
   await api.disconnect();
