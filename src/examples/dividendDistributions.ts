@@ -4,8 +4,8 @@ import { TargetTreatment } from '@polymathnetwork/polymesh-sdk/types';
 
 import { getClient } from '~/common/client';
 
-/* 
-  This script showcases Dividend Distribution related functionality. It: 
+/*
+  This script showcases Dividend Distribution related functionality. It:
     - Creates a Dividend Distribution
     - Modifies its Checkpoint
     - Fetches the new Checkpoint
@@ -35,25 +35,33 @@ import { getClient } from '~/common/client';
 
   const originPortfolio = await identity.portfolios.getPortfolio({ portfolioId: new BigNumber(1) });
 
+  const nextMonth = new Date();
+  nextMonth.setDate(nextMonth.getDate() + 30);
+  const checkpointDate = new Date();
+  checkpointDate.setDate(checkpointDate.getDate() + 20);
   // this creates a Corporate Action under the hood and then uses it to create the Dividend Distribution
   const createQ = await asset.corporateActions.distributions.configureDividendDistribution({
-    checkpoint: new Date(new Date().getTime() + 1000 * 60 * 20), // can also be a Checkpoint or a CheckpointSchedule
+    checkpoint: checkpointDate,
     originPortfolio, // optional, defaults to the CAA's default portfolio
     currency: 'USD',
-    perShare: new BigNumber(100),
-    maxAmount: new BigNumber(5000000),
-    paymentDate: new Date(new Date().getTime() * 1000 * 60 * 60 * 24 * 30), // 30 days from now
+    perShare: new BigNumber(10),
+    maxAmount: new BigNumber(500),
+    paymentDate: nextMonth,
     // expiryDate: undefined, means the distribution doesn't expire
-    declarationDate: new Date('10/14/2020'),
+    // declarationDate: new Date('10/14/2020'),
     description: 'Gonna throw some money around',
     targets: {
-      identities: ['0x01', '0x02', '0x03'], // can be Identity objects as well
+      identities: [
+        '0x0100000000000000000000000000000000000000000000000000000000000000',
+        '0x0200000000000000000000000000000000000000000000000000000000000000',
+        '0x0300000000000000000000000000000000000000000000000000000000000000',
+      ], // can be Identity objects as well
       treatment: TargetTreatment.Include,
     }, // optional
     defaultTaxWithholding: new BigNumber(10),
     taxWithholdings: [
       {
-        identity: '0x01',
+        identity: '0x0100000000000000000000000000000000000000000000000000000000000000',
         percentage: new BigNumber(15),
       },
     ],

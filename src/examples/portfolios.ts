@@ -1,7 +1,7 @@
 import { getClient } from '~/common/client';
 
-/* 
-  This script showcases Portfolio related functionality. It:    
+/*
+  This script showcases Portfolio related functionality. It:
     - Creates a Portfolio
     - Renames a Portfolio
     - Fetches an Identity's Portfolios

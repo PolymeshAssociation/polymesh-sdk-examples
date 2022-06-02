@@ -2,7 +2,7 @@ import { TxGroup } from '@polymathnetwork/polymesh-sdk/types';
 
 import { getClient } from '~/common/client';
 
-/* 
+/*
   This script demonstrates Identity functionality. It:
     - Sends an invitation to an Account to join the signing Identity
     - Queries the signing Identity's signing keys

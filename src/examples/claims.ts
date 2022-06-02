@@ -16,8 +16,8 @@ const renderClaim = ({ target, issuer, issuedAt, expiry, claim }: ClaimData, pos
   console.log('\n');
 };
 
-/* 
-  This script showcases Claim related functionality. It:    
+/*
+  This script showcases Claim related functionality. It:
     - Add a claim
     - Revoke a claim
     - Get CDD claims

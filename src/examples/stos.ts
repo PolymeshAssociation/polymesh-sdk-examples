@@ -2,7 +2,7 @@ import { BigNumber } from '@polymathnetwork/polymesh-sdk';
 
 import { getClient } from '~/common/client';
 
-/* 
+/*
   This script showcases Offering functionality. It:
   - Launches an Offering
   - Fetches its details
@@ -35,7 +35,7 @@ import { getClient } from '~/common/client';
   const launchOfferingQ = await asset.offerings.launch({
     offeringPortfolio, // optional, defaults to the PIA's default portfolio
     raisingPortfolio,
-    raisingCurrency: 'USD_STABLECOIN',
+    raisingCurrency: 'USD_COIN',
     venue, // optional, defaults to the first "Offering" type venue created by the owner of the Offering Portfolio
     name: 'MY_STO',
     start: new Date(new Date().getTime() + 60 * 1000 * 20), // optional, defaults to right now
@@ -65,7 +65,7 @@ import { getClient } from '~/common/client';
   - balance: ${status.balance}
   - sale: ${status.sale}
   - timing: ${status.timing}
-  
+
   Total remaining assets: ${totalRemaining.toFormat()}`);
 
   // Fetch investments
@@ -87,15 +87,15 @@ import { getClient } from '~/common/client';
 
   await modifyTimesQ.run();
 
-  // Freeze
+  // // Freeze
   const freezeQ = await offering.freeze();
   await freezeQ.run();
 
-  // Unfreeze
+  // // Unfreeze
   const unfreezeQ = await offering.unfreeze();
   await unfreezeQ.run();
 
-  // Close
+  // // Close
   const closeQ = await offering.close();
   await closeQ.run();
 

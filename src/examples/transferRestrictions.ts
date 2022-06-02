@@ -2,8 +2,8 @@ import { BigNumber } from '@polymathnetwork/polymesh-sdk';
 
 import { getClient } from '~/common/client';
 
-/* 
-  This script showcases Transfer Restriction related functionality. It: 
+/*
+  This script showcases Transfer Restriction related functionality. It:
     - Adds a count restriction to a Asset
     - Adds a percentage restriction to the Asset
     - Sets (deletes existing and adds new) percentage restrictions on the Asset

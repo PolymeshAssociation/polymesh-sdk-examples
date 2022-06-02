@@ -4,11 +4,11 @@ import P from 'bluebird';
 
 import { getClient } from '~/common/client';
 
-/* 
+/*
   This script showcases External Agents related functionality. It:
-    - Creates a Permission Group    
+    - Creates a Permission Group
     - Fetches all Permission Groups
-    - Invites an Identity to be an Agent 
+    - Invites an Identity to be an Agent
     - Fetches list of Agents and their respective Permission Groups
     - Revokes an Agent's permissions
     - Retrieves all the Assets over which an Identity has permissions
@@ -49,17 +49,17 @@ import { getClient } from '~/common/client';
     //   transactions: {
     //     values: [ModuleName.Asset],
     //     type: PermissionType.Include,
-    //     exceptions: [AssetTx.Freeze]
+    //     exceptions: [AssetTx.Freeze],
     //   },
-    //   transactionGroups: [TxGroup.PortfolioManagement]
-    // }
+    //   transactionGroups: [TxGroup.PortfolioManagement],
+    // },
     // permissions: {
     //   transactions: {
     //     values: [ModuleName.Asset],
     //     type: PermissionType.Exclude,
-    //     exceptions: [AssetTx.Freeze]
-    //   }
-    // }
+    //     exceptions: [AssetTx.Freeze],
+    //   },
+    // },
   });
   console.log('Creating group...');
   const newGroup = await createGroupQ.run();
@@ -69,9 +69,9 @@ import { getClient } from '~/common/client';
   const { known, custom } = await asset.permissions.getGroups();
 
   console.log(`\nKnown Permission Groups:\n`);
-  await P.each(known, async knwonGroup => {
-    const { transactions, transactionGroups } = await knwonGroup.getPermissions();
-    console.log(`[${knwonGroup.type} Group]`);
+  await P.each(known, async knownGroup => {
+    const { transactions, transactionGroups } = await knownGroup.getPermissions();
+    console.log(`[${knownGroup.type} Group]`);
     console.log(`Transactions values: ${transactions ? transactions.values : 'ALL'}`);
     console.log(`Transactions type: ${transactions ? transactions.type : '-'}`);
     console.log(`Transactions exceptions: ${transactions ? transactions.exceptions : '-'}`);
@@ -95,7 +95,8 @@ import { getClient } from '~/common/client';
    *   the corresponding target. An Identity can
    *   fetch its pending Authorization Requests by calling `authorizations.getReceived`
    */
-  const bobIdentity = '0x123';
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  const bobIdentity = process.env.BOB_DID!;
   const inviteAgentQ = await asset.permissions.inviteAgent({
     target: bobIdentity,
     permissions: newGroup,
@@ -122,7 +123,6 @@ import { getClient } from '~/common/client';
   });
 
   // Revokes an Agent's permissions
-
   const removeAgentQ = await asset.permissions.removeAgent({
     target: bobIdentity,
   });
@@ -132,9 +132,9 @@ import { getClient } from '~/common/client';
   // Retrieves an Identity's Permission Group for a specific Asset
 
   const group = await identity.assetPermissions.getGroup({
-    asset: 'FAKETOKEN',
+    asset: ticker,
   });
-  console.log(`FAKETOKEN - ${'type' in group ? group.type : group.id}`);
+  console.log(`${ticker} - ${'type' in group ? group.type : group.id}`);
 
   // Assigns an Identity to a different Permission Group
 
@@ -155,7 +155,7 @@ import { getClient } from '~/common/client';
 
   console.log(
     await identity.assetPermissions.checkPermissions({
-      asset: 'FAKETOKEN',
+      asset: ticker,
       transactions: [AssetTx.RenameAsset],
     })
   );
@@ -163,7 +163,7 @@ import { getClient } from '~/common/client';
   // Abdicates from the current Permissions Group for a given Asset
 
   const waiveQ = await identity.assetPermissions.waive({
-    asset: 'FAKETOKEN',
+    asset: ticker,
   });
 
   console.log('Abdicating...');

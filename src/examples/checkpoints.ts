@@ -3,8 +3,8 @@ import { CalendarUnit } from '@polymathnetwork/polymesh-sdk/types';
 
 import { getClient } from '~/common/client';
 
-/* 
-  This script showcases Checkpoints related functionality. It:    
+/*
+  This script showcases Checkpoints related functionality. It:
     - Creates a Checkpoint
     - Fetches asset's Checkpoints
     - Fetches Checkpoint details
@@ -56,9 +56,10 @@ import { getClient } from '~/common/client';
 
   const checkpoints = await asset.checkpoints.get();
   console.log(`Current checkpoints: ${checkpoints.data.length}`);
-
+  const tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1);
   const createScheduleQ = await asset.checkpoints.schedules.create({
-    start: new Date(),
+    start: tomorrow,
     period: { unit: CalendarUnit.Week, amount: new BigNumber(1) },
     repetitions: new BigNumber(5),
   });
