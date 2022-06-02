@@ -87,15 +87,15 @@ import { getClient } from '~/common/client';
 
   await modifyTimesQ.run();
 
-  // // Freeze
+  // Freeze
   const freezeQ = await offering.freeze();
   await freezeQ.run();
 
-  // // Unfreeze
+  // Unfreeze
   const unfreezeQ = await offering.unfreeze();
   await unfreezeQ.run();
 
-  // // Close
+  // Close
   const closeQ = await offering.close();
   await closeQ.run();
 
