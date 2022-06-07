@@ -48,7 +48,7 @@ import { getClient } from '~/common/client';
     maxAmount: new BigNumber(500),
     paymentDate: nextMonth,
     // expiryDate: undefined, means the distribution doesn't expire
-    // declarationDate: new Date('10/14/2020'),
+    declarationDate: new Date('10/14/2020'),
     description: 'Gonna throw some money around',
     targets: {
       identities: [
