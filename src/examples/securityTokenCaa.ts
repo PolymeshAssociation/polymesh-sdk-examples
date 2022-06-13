@@ -2,7 +2,7 @@ import { ModuleName, PermissionType } from '@polymathnetwork/polymesh-sdk/types'
 
 import { getClient } from '~/common/client';
 
-/* 
+/*
   This script demonstrates Asset CAA functionality. It:
     - Queries the current CAA
     - Assigns a new CAA
@@ -31,8 +31,10 @@ import { getClient } from '~/common/client';
     });
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  const bobDid = process.env.BOB_DID!;
   const target = await api.identities.getIdentity({
-    did: '0x1906c0a0f58364d3f71c4e94e1361af9810666445564840c96f9f1a965cf6045',
+    did: bobDid,
   });
 
   const setCorporateActionsAgent = await asset.permissions.inviteAgent({

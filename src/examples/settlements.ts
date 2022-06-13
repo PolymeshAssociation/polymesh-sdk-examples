@@ -3,7 +3,7 @@ import { VenueType } from '@polymathnetwork/polymesh-sdk/types';
 
 import { getClient } from '~/common/client';
 
-/* 
+/*
   This script showcases Settlement related functionality. It:
     - Creates a Venue
     - Fetches a Venue's details
@@ -37,19 +37,19 @@ import { getClient } from '~/common/client';
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const bob = await api.identities.getIdentity({ did: process.env.BOB_DID! });
 
-  const destinationPortfolio = await bob.portfolios.getPortfolio({ portfolioId: new BigNumber(1) });
+  const destinationPortfolio = await bob.portfolios.getPortfolio();
 
   const instructionQ = await venue.addInstruction({
     legs: [
       {
-        from: identity, // passing the Identity (or did) means the default portfolio will be used
-        to: destinationPortfolio, // or you can pass a Portfolio
+        to: identity, // passing the Identity (or did) means the default portfolio will be used
+        from: destinationPortfolio, // or you can pass a Portfolio
         amount: new BigNumber(1000),
         asset: 'MY_TOKEN',
       },
     ],
     endBlock: new BigNumber(10000000),
-    tradeDate: new Date('12/25/2020'),
+    tradeDate: new Date('12/25/2030'),
   });
 
   console.log('Creating Instruction...\n');
@@ -82,10 +82,10 @@ import { getClient } from '~/common/client';
   await authorizeQ.run();
 
   /* Instructions can be unauthorized (will be withdrawn) or rejected */
-  /* 
+  /*
     const unauthorizeQ = await instruction.unauthorize();
     await unauthorizeQ.run();
-    
+
     const rejectQ = await instruction.reject();
     await rejectQ.run();
   */

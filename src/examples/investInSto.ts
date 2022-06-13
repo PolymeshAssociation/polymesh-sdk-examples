@@ -7,7 +7,7 @@ import {
 
 import { getClient } from '~/common/client';
 
-/* 
+/*
   This script showcases Offering investment functionality. It:
   - Fetches all Offerings for a Asset
   - Invests in one of them
@@ -31,7 +31,7 @@ import { getClient } from '~/common/client';
     portfolioId: new BigNumber(2),
   });
 
-  const [{ offering }] = await asset.offerings.get({
+  const [, { offering }] = await asset.offerings.get({
     status: {
       timing: OfferingTimingStatus.Started,
       sale: OfferingSaleStatus.Live,
@@ -43,8 +43,8 @@ import { getClient } from '~/common/client';
   const investQ = await offering.invest({
     purchasePortfolio,
     fundingPortfolio,
-    purchaseAmount: new BigNumber(100),
-    maxPrice: new BigNumber(1100),
+    purchaseAmount: new BigNumber(10),
+    maxPrice: new BigNumber(110),
   });
 
   await investQ.run();
