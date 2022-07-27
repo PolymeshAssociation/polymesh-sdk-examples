@@ -1,5 +1,5 @@
-import { BigNumber } from '@polymathnetwork/polymesh-sdk';
-import { VenueType } from '@polymathnetwork/polymesh-sdk/types';
+import { BigNumber } from '@polymeshassociation/polymesh-sdk';
+import { VenueType } from '@polymeshassociation/polymesh-sdk/types';
 
 import { getClient } from '~/common/client';
 

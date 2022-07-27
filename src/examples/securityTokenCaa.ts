@@ -1,4 +1,4 @@
-import { ModuleName, PermissionType } from '@polymathnetwork/polymesh-sdk/types';
+import { ModuleName, PermissionType } from '@polymeshassociation/polymesh-sdk/types';
 
 import { getClient } from '~/common/client';
 

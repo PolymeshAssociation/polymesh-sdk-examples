@@ -1,4 +1,4 @@
-import { TxGroup } from '@polymathnetwork/polymesh-sdk/types';
+import { TxGroup } from '@polymeshassociation/polymesh-sdk/types';
 
 import { getClient } from '~/common/client';
 

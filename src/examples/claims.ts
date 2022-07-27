@@ -1,4 +1,4 @@
-import { ClaimData, ClaimType, ScopeType } from '@polymathnetwork/polymesh-sdk/types';
+import { ClaimData, ClaimType, ScopeType } from '@polymeshassociation/polymesh-sdk/types';
 
 import { getClient } from '~/common/client';
 

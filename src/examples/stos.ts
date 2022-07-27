@@ -1,4 +1,4 @@
-import { BigNumber } from '@polymathnetwork/polymesh-sdk';
+import { BigNumber } from '@polymeshassociation/polymesh-sdk';
 
 import { getClient } from '~/common/client';
 
