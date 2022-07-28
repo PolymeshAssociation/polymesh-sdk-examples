@@ -5,12 +5,12 @@ import {
   ConditionType,
   ScopeType,
 } from '@polymeshassociation/polymesh-sdk/types';
-import { toHumanReadable } from '@polymeshassociation/polymesh-sdk/utils/internal';
 
 import { getClient } from '~/common/client';
+import { toHumanObject } from '~/common/utils';
 
 /*
-  This script showcases Compliance related functionality. It:
+  This script showcases Compliance related functionality. Covered functionality:
     - Setting Compliance rules 
     - Getting existing Compliance rules
     - Pausing Compliance rules
@@ -51,7 +51,7 @@ import { getClient } from '~/common/client';
   // eslint-disable-next-line require-jsdoc
   const getExistingRequirements = async (): Promise<void> => {
     const existingRequirements = await requirements.get();
-    console.log(JSON.stringify(toHumanReadable(existingRequirements)));
+    console.log(JSON.stringify(toHumanObject(existingRequirements)));
   };
 
   console.log('\n\nSetting new set of Requirements ....');
