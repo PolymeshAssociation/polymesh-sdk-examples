@@ -49,7 +49,7 @@ import { toHumanObject } from '~/common/utils';
   } = asset;
 
   // eslint-disable-next-line require-jsdoc
-  const getExistingRequirements = async (): Promise<void> => {
+  const printExistingRequirements = async (): Promise<void> => {
     const existingRequirements = await requirements.get();
     console.log(JSON.stringify(toHumanObject(existingRequirements)));
   };
@@ -82,7 +82,7 @@ import { toHumanObject } from '~/common/utils';
   await setRequirements.run();
 
   console.log(`New compliance requirements...`);
-  await getExistingRequirements();
+  await printExistingRequirements();
 
   console.log(`\n\nPausing Compliance Requirements...`);
   const pauseRequirements = await requirements.pause();
@@ -117,7 +117,7 @@ import { toHumanObject } from '~/common/utils';
   await addRequirements.run();
 
   console.log('New compliance requirements after addition -');
-  await getExistingRequirements();
+  await printExistingRequirements();
 
   console.log('\n\nRemoving the newly added requirement... ');
   // we can either pass the id of the requirement or the requirement itself
@@ -125,10 +125,10 @@ import { toHumanObject } from '~/common/utils';
   await removeRequirement.run();
 
   console.log('New compliance requirements after removal');
-  await getExistingRequirements();
+  await printExistingRequirements();
 
   // eslint-disable-next-line require-jsdoc
-  const getExistingClaimIssuers = async (): Promise<void> => {
+  const printExistingClaimIssuers = async (): Promise<void> => {
     const claimIssuers = await trustedClaimIssuers.get();
     claimIssuers.forEach(({ identity: { did }, trustedFor }, index) => {
       console.log(`${index + 1}. Identity - ${did}`);
@@ -137,7 +137,7 @@ import { toHumanObject } from '~/common/utils';
   };
 
   console.log('\n\nGetting existing claim issuers...');
-  await getExistingClaimIssuers();
+  await printExistingClaimIssuers();
 
   console.log('\n\nSetting new set of trusted Claim issuers... ');
   const setTrustedClaimIssuers = await trustedClaimIssuers.set({
@@ -151,7 +151,7 @@ import { toHumanObject } from '~/common/utils';
   await setTrustedClaimIssuers.run();
 
   console.log('\n\n Fetching updated claim issuers...');
-  await getExistingClaimIssuers();
+  await printExistingClaimIssuers();
 
   console.log('\n\nAdding a new claim issuer...');
   const addClaimIssuer = await trustedClaimIssuers.add({
@@ -165,14 +165,14 @@ import { toHumanObject } from '~/common/utils';
   await addClaimIssuer.run();
 
   console.log('\n\n Fetching updated claim issuers...');
-  await getExistingClaimIssuers();
+  await printExistingClaimIssuers();
 
   console.log('\n\nRemoving a claim issuer....');
   const removeClaimIssuer = await trustedClaimIssuers.remove({ claimIssuers: [bobDid] });
   await removeClaimIssuer.run();
 
   console.log('\n\n Updated claim issuers...');
-  await getExistingClaimIssuers();
+  await printExistingClaimIssuers();
 
   await api.disconnect();
 })();
