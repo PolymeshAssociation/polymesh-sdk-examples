@@ -1,6 +1,6 @@
-import { BigNumber } from '@polymathnetwork/polymesh-sdk';
-import { Checkpoint } from '@polymathnetwork/polymesh-sdk/internal';
-import { TargetTreatment } from '@polymathnetwork/polymesh-sdk/types';
+import { BigNumber } from '@polymeshassociation/polymesh-sdk';
+import { TargetTreatment } from '@polymeshassociation/polymesh-sdk/types';
+import { isCheckpoint } from '@polymeshassociation/polymesh-sdk/utils';
 
 import { getClient } from '~/common/client';
 
@@ -78,7 +78,7 @@ import { getClient } from '~/common/client';
   const newCheckpoint = await distribution.checkpoint();
 
   let creationDate: Date;
-  if (newCheckpoint instanceof Checkpoint) {
+  if (isCheckpoint(newCheckpoint)) {
     creationDate = await newCheckpoint.createdAt();
   } else {
     ({ nextCheckpointDate: creationDate } = await newCheckpoint.details());

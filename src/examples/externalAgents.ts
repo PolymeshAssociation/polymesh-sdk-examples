@@ -1,4 +1,4 @@
-import { AssetTx, PermissionType, TxGroup } from '@polymathnetwork/polymesh-sdk/types';
+import { AssetTx, PermissionType, TxGroup } from '@polymeshassociation/polymesh-sdk/types';
 import P from 'bluebird';
 
 import { getClient } from '~/common/client';

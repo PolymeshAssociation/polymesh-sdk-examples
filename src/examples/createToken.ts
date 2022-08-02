@@ -1,5 +1,5 @@
-import { BigNumber } from '@polymathnetwork/polymesh-sdk';
-import { KnownAssetType } from '@polymathnetwork/polymesh-sdk/types';
+import { BigNumber } from '@polymeshassociation/polymesh-sdk';
+import { KnownAssetType } from '@polymeshassociation/polymesh-sdk/types';
 
 import { getClient } from '~/common/client';
 
