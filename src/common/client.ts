@@ -8,7 +8,7 @@ let api: Polymesh;
  */
 export async function getClient(mnemonic?: string): Promise<Polymesh> {
   const localSigningManager = await LocalSigningManager.create({
-    accounts: [{ mnemonic: mnemonic || '//Alice' }],
+    accounts: [mnemonic ? { mnemonic } : { uri: '//Alice' }],
   });
 
   if (!api) {

@@ -45,7 +45,7 @@ const renderClaim = ({ target, issuer, issuedAt, expiry, claim }: ClaimData, pos
           type: ClaimType.Accredited,
           scope: {
             type: ScopeType.Ticker,
-            value: 'SOMETICKER',
+            value: 'SOME_TICKER',
           },
         },
       },
@@ -64,7 +64,7 @@ const renderClaim = ({ target, issuer, issuedAt, expiry, claim }: ClaimData, pos
           type: ClaimType.Accredited,
           scope: {
             type: ScopeType.Ticker,
-            value: 'SOMETICKER',
+            value: 'SOME_TICKER',
           },
         },
       },
