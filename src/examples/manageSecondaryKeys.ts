@@ -43,15 +43,15 @@ import { getClient } from '~/common/client';
   let secondaryAccounts = await identity.getSecondaryAccounts();
 
   console.log('Signing keys:');
-  secondaryAccounts.forEach(({ account }) => {
+  secondaryAccounts.data.forEach(({ account }) => {
     console.log(`- Type: Account, Value: ${account.address}`);
   });
 
-  if (secondaryAccounts.length) {
+  if (secondaryAccounts.data.length) {
     const modifyPermissions = await api.accountManagement.modifyPermissions({
       secondaryAccounts: [
         {
-          account: secondaryAccounts[0].account,
+          account: secondaryAccounts.data[0].account,
           permissions: {
             portfolios: null,
           },
@@ -64,7 +64,7 @@ import { getClient } from '~/common/client';
   }
 
   const removeKeysQ = await api.accountManagement.removeSecondaryAccounts({
-    accounts: secondaryAccounts.slice(0, 1).map(({ account }) => account),
+    accounts: secondaryAccounts.data.slice(0, 1).map(({ account }) => account),
   });
 
   console.log('Removing first key');
@@ -73,7 +73,7 @@ import { getClient } from '~/common/client';
   secondaryAccounts = await identity.getSecondaryAccounts();
 
   console.log('Signing keys (after removing):');
-  secondaryAccounts.forEach(({ account }) => {
+  secondaryAccounts.data.forEach(({ account }) => {
     console.log(`- Type: Account, Value: ${account.address}`);
   });
 
