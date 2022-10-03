@@ -51,8 +51,8 @@
     "typescript": "4.4.4"
   },
   "dependencies": {
-    "@polymathnetwork/local-signing-manager": "^1.0.5",
-    "@polymeshassociation/polymesh-sdk": "15.1.0-alpha.3",
+    "@polymeshassociation/local-signing-manager": "1.1.0",
+    "@polymeshassociation/polymesh-sdk": "18.0.0-alpha.2",
     "bluebird": "^3.7.2",
     "dotenv": "^8.2.0"
   },

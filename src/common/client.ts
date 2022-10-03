@@ -1,4 +1,4 @@
-import { LocalSigningManager } from '@polymathnetwork/local-signing-manager';
+import { LocalSigningManager } from '@polymeshassociation/local-signing-manager';
 import { Polymesh } from '@polymeshassociation/polymesh-sdk';
 
 let api: Polymesh;
