@@ -23,7 +23,7 @@ import { getClient } from '~/common/client';
   }
 
   // Account to invite to join the signing Identity
-  const targetAccount = api.accountManagement.getAccount({
+  const targetAccount = await api.accountManagement.getAccount({
     address: accountAddress,
   });
 
