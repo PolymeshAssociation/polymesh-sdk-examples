@@ -1,6 +1,6 @@
-import { MetadataEntry } from '@polymeshassociation/polymesh-sdk/internal';
 import {
   Identity,
+  MetadataEntry,
   MetadataLockStatus,
   MetadataType,
 } from '@polymeshassociation/polymesh-sdk/types';
