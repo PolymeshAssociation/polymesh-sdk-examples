@@ -9,14 +9,18 @@ import { getClient } from '~/common/client';
 
 /* 
   This script showcases Metadata related functionality. It:
-    - Fetches all the Global Metadata Keys
-    - Creates a new Asset Metadata
-    - Fetches Checkpoint details
-    - Creates a Schedule
-    - Fetches asset's Schedules
-    - Fetches Schedule details
-    - Fetches Checkpoints originated by a Schedule
-    - Deletes a Schedule
+    - Get all the Global Metadata Keys
+    - Get Metadata Entry for a specific id and type
+    - Global Asset Metadata
+      - Set value for Global Asset Metadata
+      - Setting details (expiry and lockStatus) for the Metadata value
+      - Fetching the newly set value for Global Metadata
+    - Local Asset Metadata
+      - Register a new local Asset Metadata
+      - Set value for the newly created Metadata
+      - Set details for the Metadata value
+      - Register and set value for a local Asset Metadata 
+    - Fetch all Metadata for a Ticker
 */
 (async (): Promise<void> => {
   console.log('Connecting to the node...\n');
