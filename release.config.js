@@ -1,5 +1,5 @@
 module.exports = {
-  repositoryUrl: 'https://github.com/PolymathNetwork/typescript-boilerplate.git',
+  repositoryUrl: 'https://github.com/PolymeshAssociation/typescript-boilerplate.git',
   branches: [
     'master',
     {

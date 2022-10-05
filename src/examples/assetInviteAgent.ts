@@ -1,9 +1,11 @@
+import { PermissionGroupType } from '@polymeshassociation/polymesh-sdk/types';
+
 import { getClient } from '~/common/client';
 
 /*
   This script demonstrates Asset PIA functionality. It:
     - Queries the current PIA
-    - Assigns a new PIA
+    - Invites a new Agent 
 */
 (async (): Promise<void> => {
   console.log('Connecting to the node...\n\n');
@@ -20,11 +22,11 @@ import { getClient } from '~/common/client';
   }
 
   const asset = await api.assets.getAsset({ ticker });
-  const { primaryIssuanceAgents } = await asset.details();
+  const { fullAgents } = await asset.details();
 
-  if (primaryIssuanceAgents.length) {
-    console.log('Primary Issuance Agents:');
-    primaryIssuanceAgents.forEach(({ did }) => {
+  if (fullAgents.length) {
+    console.log('Agents:');
+    fullAgents.forEach(({ did }) => {
       console.log(`- DID: ${did}`);
     });
   }
@@ -35,12 +37,20 @@ import { getClient } from '~/common/client';
     did: bobDid,
   });
 
-  const modifyPrimaryIssuanceAgent = await asset.modifyPrimaryIssuanceAgent({
+  console.log(`Fetching permissions group of type - ${PermissionGroupType.Full}`);
+  const fullPermissions = await asset.permissions.getGroup({ type: PermissionGroupType.Full });
+
+  console.log(fullPermissions.toHuman());
+
+  const invitingFullAgentTx = await asset.permissions.inviteAgent({
     target,
+    permissions: fullPermissions,
   });
 
-  console.log('Assigning a new primary issuance agent for the Asset...');
-  await modifyPrimaryIssuanceAgent.run();
+  console.log('Inviting a new agent for the Asset with full permissions...');
+  const authRequest = await invitingFullAgentTx.run();
+
+  console.log(`Authorization added with id ${authRequest.authId.toString()}`);
 
   await api.disconnect();
 })();
