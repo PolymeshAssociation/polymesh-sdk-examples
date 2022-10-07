@@ -56,6 +56,26 @@
     "bluebird": "^3.7.2",
     "dotenv": "^8.2.0"
   },
+  "resolutions": {
+    "@polkadot/keyring": "9.5.1",
+    "@polkadot/util": "9.5.1",
+    "@polkadot/networks": "9.5.1",
+    "@polkadot/util-crypto": "9.5.1"
+  },
+  "overrides": {
+    "@polkadot/keyring": "9.5.1",
+    "@polkadot/util": "9.5.1",
+    "@polkadot/networks": "9.5.1",
+    "@polkadot/util-crypto": "9.5.1"
+  },
+  "pnpm": {
+    "overrides": {
+      "@polkadot/keyring": "9.5.1",
+      "@polkadot/util": "9.5.1",
+      "@polkadot/networks": "9.5.1",
+      "@polkadot/util-crypto": "9.5.1"
+    }
+  },
   "config": {
     "commitizen": {
       "path": "./node_modules/cz-conventional-changelog"
