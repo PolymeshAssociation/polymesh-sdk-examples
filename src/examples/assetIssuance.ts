@@ -21,6 +21,8 @@ type ScriptArgs = {
     - Issues new tokens
     - Get all asset holders
     - Redeems tokens
+
+  Usage: yarn run-example ./src/examples/assetIssuance.ts ticker=<TICKER> action=<ACTION> amount=<INTEGER>
 */
 (async (): Promise<void> => {
   /**
@@ -42,12 +44,19 @@ type ScriptArgs = {
    * @param asset - Asset to issue tokens for
    * @param amount - Amount of tokens to issue
    **/
-  const issueTokens = async (asset: Asset, amount: number): Promise<void> => {
+  const issueTokens = async (asset: Asset, amount?: number): Promise<void> => {
+    if (!amount) {
+      throw new Error('Please supply amount of tokens to issue as an argument to the script');
+    }
+
+    console.log(`Preparing to issue ${amount} of tokens for ${asset.ticker}`);
+
     const issueTokensProcedure = await asset.issuance.issue({ amount: new BigNumber(amount) });
 
-    const result = await issueTokensProcedure.run();
+    await issueTokensProcedure.run();
 
-    console.log(`Tokens issued! ${result}`);
+    console.log(`TX Status: ${issueTokensProcedure.status}`);
+    console.log(`Block Hash: ${issueTokensProcedure.blockHash}`);
   };
 
   /**
@@ -55,12 +64,19 @@ type ScriptArgs = {
    * @param asset - Asset to issue tokens for
    * @param amount - Amount of tokens to redeem
    **/
-  const redeemTokens = async (asset: Asset, amount: number): Promise<void> => {
+  const redeemTokens = async (asset: Asset, amount?: number): Promise<void> => {
+    if (!amount) {
+      throw new Error('Please supply amount of tokens to redeem as an argument to the script');
+    }
+
+    console.log(`Preparing to redeem ${amount} of tokens for ${asset.ticker}`);
+
     const redeemTokensProcedure = await asset.redeem({ amount: new BigNumber(amount) });
 
-    const result = await redeemTokensProcedure.run();
+    await redeemTokensProcedure.run();
 
-    console.log(`Tokens redeemed! ${result}`);
+    console.log(`TX Status: ${redeemTokensProcedure.status}`);
+    console.log(`Block Hash: ${redeemTokensProcedure.blockHash}`);
   };
 
   /**
@@ -84,28 +100,18 @@ type ScriptArgs = {
     const identity = (await api.getSigningIdentity())!;
     console.log(`Connected! Signing Identity ID: ${identity.did}`);
 
-    console.log(`\n➡️ Getting Global Asset Metadata Keys`);
-
     const asset = await api.assets.getAsset({ ticker });
 
-    switch (action) {
-      case SCRIPT_ACTIONS.ISSUE:
-        if (!amount) {
-          throw new Error('Please supply amount of tokens to issue as an argument to the script');
-        }
-        await issueTokens(asset, amount);
-        break;
-      case SCRIPT_ACTIONS.GET_HOLDERS:
-        await getHolders(asset);
-        break;
-      case SCRIPT_ACTIONS.REDEEM:
-        if (!amount) {
-          throw new Error('Please supply amount of tokens to redeem as an argument to the script');
-        }
-        await redeemTokens(asset, amount);
-        break;
-      default:
-        break;
+    if (action === SCRIPT_ACTIONS.ISSUE) {
+      await issueTokens(asset, amount);
+    }
+
+    if (action === SCRIPT_ACTIONS.GET_HOLDERS) {
+      await getHolders(asset);
+    }
+
+    if (action === SCRIPT_ACTIONS.REDEEM) {
+      await redeemTokens(asset, amount);
     }
 
     console.log('Disconnecting from the node...\n');
@@ -113,5 +119,5 @@ type ScriptArgs = {
     await api.disconnect();
   };
 
-  runScript();
+  await runScript();
 })();
