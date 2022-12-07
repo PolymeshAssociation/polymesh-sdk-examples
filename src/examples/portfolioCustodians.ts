@@ -9,6 +9,7 @@ import { getClient } from '~/common/client';
     - Sets a different Custodian to that Portfolio
     - Fetches owned Portfolios
     - Fetches Portfolios in custody
+    - Quits Portfolio custody
 */
 (async (): Promise<void> => {
   console.log('Connecting to the node...\n\n');

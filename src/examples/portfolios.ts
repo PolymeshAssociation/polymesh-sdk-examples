@@ -9,6 +9,8 @@ import { getClient } from '~/common/client';
     - Renames a Portfolio
     - Fetches an Identity's Portfolios
     - Fetches a Portfolio's Balances
+    - Moves tokens between Portfolios
+    - Redeems tokens from Portfolio
     - Deletes a Portfolio
 */
 (async (): Promise<void> => {
