@@ -26,3 +26,19 @@ export function toHumanObject(obj: unknown): unknown {
 
   return obj;
 }
+
+/**
+ * @hidden
+ */
+export function parseArgs<T>(args: string[]): T {
+  // parse args
+  const parsedArgs = args.reduce((acc, arg) => {
+    const [key, value] = arg.split('=');
+
+    return Object.assign(acc, {
+      [key]: !isNaN(parseInt(value)) && isFinite(Number(value)) ? parseInt(value) : value,
+    });
+  }, {});
+
+  return parsedArgs as T;
+}
