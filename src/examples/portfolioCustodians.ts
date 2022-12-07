@@ -81,5 +81,16 @@ import { getClient } from '~/common/client';
   const custodiedPortfolios = await bob.portfolios.getCustodiedPortfolios();
   console.log(`Custodied Portfolios owned by a third party: ${custodiedPortfolios}`);
 
+  // bob wants to quit a Portfolio custody
+  const [portfolioToQuit] = custodiedPortfolios.data;
+
+  const quitCustodyQ = await portfolioToQuit.quitCustody();
+  await quitCustodyQ.run();
+
+  // Bob can get all non owned portfolios where they are the custodian
+  // getCustodiedPortfolios retrieves only portfolios owned by a different Identity but custodied by this one
+  const custodiedPortfoliosAfterQuit = await bob.portfolios.getCustodiedPortfolios();
+  console.log(`Custodied Portfolios owned by a third party: ${custodiedPortfoliosAfterQuit}`);
+
   await api.disconnect();
 })();
