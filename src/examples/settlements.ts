@@ -50,6 +50,7 @@ import { getClient } from '~/common/client';
     ],
     endBlock: new BigNumber(10000000),
     tradeDate: new Date('12/25/2030'),
+    memo: 'Some message', // optional - passing a message with the instruction
   });
 
   console.log('Creating Instruction...\n');
