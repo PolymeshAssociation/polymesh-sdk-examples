@@ -45,17 +45,30 @@ import { parseArgs } from '~/common/utils';
   // get subsidy
   const subsidy = await api.accountManagement.getSubsidy({ subsidizer, beneficiary });
 
+  // get allowance
+  let allowance = await subsidy.getAllowance();
+  console.log(`Allowance before increase is: ${allowance}`);
+
   // add allowance
   const addAllowanceQ = await subsidy.increaseAllowance({ allowance: new BigNumber(1000) });
   await addAllowanceQ.run();
+
+  allowance = await subsidy.getAllowance();
+  console.log(`Allowance after increase is: ${allowance}`);
 
   // remove allowance
   const removeAllowanceQ = await subsidy.decreaseAllowance({ allowance: new BigNumber(1000) });
   await removeAllowanceQ.run();
 
+  allowance = await subsidy.getAllowance();
+  console.log(`Allowance after decrease is: ${allowance}`);
+
   // set allowance
-  const setAllowanceQ = await subsidy.setAllowance({ allowance: new BigNumber(1000) });
+  const setAllowanceQ = await subsidy.setAllowance({ allowance: new BigNumber(5000) });
   await setAllowanceQ.run();
+
+  allowance = await subsidy.getAllowance();
+  console.log(`Allowance after setting is: ${allowance}`);
 
   // quit subsidy
   const quitSubsidyQ = await subsidy.quit();
