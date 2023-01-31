@@ -86,6 +86,10 @@ import { parseArgs } from '~/common/utils';
   const quitSubsidyQ = await subsidy.quit();
   await quitSubsidyQ.run();
 
+  // check if subsidy is still active
+  const subsidytExists = await subsidy.exists();
+  console.log(`Subsidy still exists: ${subsidytExists}`);
+
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   console.log('Disconnecting from the node...\n');
 })();
