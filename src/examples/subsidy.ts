@@ -1,5 +1,5 @@
 import { BigNumber } from '@polymeshassociation/polymesh-sdk';
-import { Identity } from '@polymeshassociation/polymesh-sdk/types';
+import { Identity, PermissionedAccount } from '@polymeshassociation/polymesh-sdk/types';
 
 import { getClient } from '~/common/client';
 import { parseArgs } from '~/common/utils';
@@ -42,20 +42,25 @@ import { parseArgs } from '~/common/utils';
   console.log(`Subsidy request has been created and will expire in ${subsidyGrantResult.expiry}`);
 
   // beneficiary now has to accept the subsidy request
-  // Here as example we use BOB_SEED as the account that would accept the subsidy, in real life this would be signed by the beneficiary
+  // it is possible to run accept method on `subsidyGrantResult` however, it is more realistic to store the `authId` and then ask the beneficiary to accept the subsidy
+  // here as example we use BOB_SEED as the account that would accept the subsidy, in real life this would be signed by the actual beneficiary
   const beneficiaryApi = await getClient(process.env.BOB_SEED);
 
   const beneficiaryIdentity = (await beneficiaryApi.getSigningIdentity()) as Identity;
 
-  const { pending } = await beneficiaryIdentity.getInstructions();
+  const {
+    account: beneficiaryAccount,
+  } = (await beneficiaryIdentity.getPrimaryAccount()) as PermissionedAccount;
 
-  if (pending.length > 0) {
-    const acceptSubsidyQ = await pending[0].affirm();
-    await acceptSubsidyQ.run();
-  }
+  const authorization = await identity.authorizations.getOne({ id: subsidyGrantResult.authId });
+  const acceptTx = await authorization.accept({ signingAccount: beneficiaryAccount });
+
+  console.log(
+    `Subsidy request has been accepted by the beneficiary. Transaction status: ${acceptTx.status}`
+  );
 
   // get subsidy
-  const subsidy = await api.accountManagement.getSubsidy({ subsidizer, beneficiary });
+  const subsidy = api.accountManagement.getSubsidy({ subsidizer, beneficiary });
 
   // get allowance
   let allowance = await subsidy.getAllowance();
@@ -87,8 +92,8 @@ import { parseArgs } from '~/common/utils';
   await quitSubsidyQ.run();
 
   // check if subsidy is still active
-  const subsidytExists = await subsidy.exists();
-  console.log(`Subsidy still exists: ${subsidytExists}`);
+  const subsidyExists = await subsidy.exists();
+  console.log(`Subsidy still exists: ${subsidyExists}`);
 
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   console.log('Disconnecting from the node...\n');
