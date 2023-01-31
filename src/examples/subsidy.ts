@@ -1,4 +1,5 @@
 import { BigNumber } from '@polymeshassociation/polymesh-sdk';
+import { Identity } from '@polymeshassociation/polymesh-sdk/types';
 
 import { getClient } from '~/common/client';
 import { parseArgs } from '~/common/utils';
@@ -41,6 +42,17 @@ import { parseArgs } from '~/common/utils';
   console.log(`Subsidy request has been created and will expire in ${subsidyGrantResult.expiry}`);
 
   // beneficiary now has to accept the subsidy request
+  // Here as example we use BOB_SEED as the account that would accept the subsidy, in real life this would be signed by the beneficiary
+  const beneficiaryApi = await getClient(process.env.BOB_SEED);
+
+  const beneficiaryIdentity = (await beneficiaryApi.getSigningIdentity()) as Identity;
+
+  const { pending } = await beneficiaryIdentity.getInstructions();
+
+  if (pending.length > 0) {
+    const acceptSubsidyQ = await pending[0].affirm();
+    await acceptSubsidyQ.run();
+  }
 
   // get subsidy
   const subsidy = await api.accountManagement.getSubsidy({ subsidizer, beneficiary });
