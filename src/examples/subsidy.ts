@@ -1,5 +1,5 @@
 import { BigNumber } from '@polymeshassociation/polymesh-sdk';
-import { Identity, PermissionedAccount } from '@polymeshassociation/polymesh-sdk/types';
+import { Identity } from '@polymeshassociation/polymesh-sdk/types';
 
 import { getClient } from '~/common/client';
 import { parseArgs } from '~/common/utils';
@@ -43,17 +43,14 @@ import { parseArgs } from '~/common/utils';
 
   // beneficiary now has to accept the subsidy request
   // it is possible to run accept method on `subsidyGrantResult` however, it is more realistic to store the `authId` and then ask the beneficiary to accept the subsidy
-  // here as example we use BOB_SEED as the account that would accept the subsidy, in real life this would be signed by the actual beneficiary
   const beneficiaryApi = await getClient(process.env.BOB_SEED);
-
+  // on the beneficiary's side we need to get the signing identity to be able to accept the subsidy with beneficiary signature
   const beneficiaryIdentity = (await beneficiaryApi.getSigningIdentity()) as Identity;
 
-  const {
-    account: beneficiaryAccount,
-  } = (await beneficiaryIdentity.getPrimaryAccount()) as PermissionedAccount;
-
-  const authorization = await identity.authorizations.getOne({ id: subsidyGrantResult.authId });
-  const acceptTx = await authorization.accept({ signingAccount: beneficiaryAccount });
+  const authorization = await beneficiaryIdentity.authorizations.getOne({
+    id: subsidyGrantResult.authId,
+  });
+  const acceptTx = await authorization.accept();
 
   console.log(
     `Subsidy request has been accepted by the beneficiary. Transaction status: ${acceptTx.status}`
@@ -93,12 +90,11 @@ import { parseArgs } from '~/common/utils';
 
   // check if subsidy is still active
   const subsidyExists = await subsidy.exists();
-  console.log(`Subsidy still exists: ${subsidyExists}`);
+  console.log(`Is subsidy still active: ${subsidyExists}`);
 
-  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   console.log('Disconnecting from the node...\n');
 })();
 
 type ScriptArgs = {
-  account?: string;
+  account: string;
 };
