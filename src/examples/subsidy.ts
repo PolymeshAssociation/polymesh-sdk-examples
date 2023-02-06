@@ -93,6 +93,7 @@ import { parseArgs } from '~/common/utils';
   console.log(`Is subsidy still active: ${subsidyExists}`);
 
   console.log('Disconnecting from the node...\n');
+  await api.disconnect();
 })();
 
 type ScriptArgs = {
