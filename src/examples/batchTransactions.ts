@@ -59,7 +59,6 @@ import { getClient } from '~/common/client';
     ticker: 'MY_TICKER',
     isDivisible: true,
     initialSupply: new BigNumber(10000),
-    requireInvestorUniqueness: false,
     assetType: KnownAssetType.EquityCommon,
   });
 

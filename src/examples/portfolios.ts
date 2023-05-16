@@ -59,7 +59,6 @@ import { getClient } from '~/common/client';
       name: 'Token One',
       isDivisible: true,
       assetType: 'share',
-      requireInvestorUniqueness: false,
     });
     asset = await assetQ.run();
   }
