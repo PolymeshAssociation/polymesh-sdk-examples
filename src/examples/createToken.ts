@@ -3,8 +3,8 @@ import { KnownAssetType } from '@polymeshassociation/polymesh-sdk/types';
 
 import { getClient } from '~/common/client';
 
-/* 
-  This script showcases Asset related functionality. It: 
+/*
+  This script showcases Asset related functionality. It:
     - Reserves a Asset with the specified ticker
     - Creates it
     - Assigns a list of documents to the Asset
@@ -39,7 +39,6 @@ import { getClient } from '~/common/client';
     isDivisible: true,
     assetType: KnownAssetType.EquityCommon,
     initialSupply: new BigNumber(3000),
-    requireInvestorUniqueness: false,
   });
 
   console.log('Creating Asset...\n');
