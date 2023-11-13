@@ -51,7 +51,8 @@ export const renderClaim = (
   { target, issuer, issuedAt, expiry, claim }: ClaimData,
   pos: number
 ): void => {
-  console.log(`Claim #${pos} ${issuedAt ? `issued at ${issuedAt}` : ``}`);
+  const issuedAtText = issuedAt ? `issued at ${issuedAt}` : '';
+  console.log(`Claim #${pos} ${issuedAtText}`);
   console.log(`Target: ${target.did}`);
   console.log(`Issuer: ${issuer.did}`);
   if (expiry) {
