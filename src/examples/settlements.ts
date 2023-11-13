@@ -2,6 +2,7 @@ import { BigNumber } from '@polymeshassociation/polymesh-sdk';
 import { VenueType } from '@polymeshassociation/polymesh-sdk/types';
 
 import { getClient } from '~/common/client';
+import { isFungibleLeg, isNftLeg } from '~/common/utils';
 
 /*
   This script showcases Settlement related functionality. It:
@@ -70,13 +71,37 @@ import { getClient } from '~/common/client';
 
   const { data: legs } = await instruction.getLegs();
 
-  legs.forEach(({ from, to, amount, asset }) => {
-    console.log(
-      `- From: ${from.owner.did}\n- To: ${to.owner.did}\n- Amount: ${amount.toFormat()}\n- Asset: ${
-        asset.ticker
-      }`
-    );
-  });
+  for (const leg of legs) {
+    if (isFungibleLeg(leg)) {
+      const { from, to, amount, asset } = leg;
+      console.log(
+        `- Fungible Leg:\n- From: ${from.owner.did}\n- To: ${
+          to.owner.did
+        }\n- Amount: ${amount.toString()}\n- Asset: ${asset}`
+      );
+    }
+
+    if (isNftLeg(leg)) {
+      const { from, to, nfts, asset } = leg;
+      console.log(
+        `- Nft Leg:\n- From: ${from.owner.did}\n- To: ${to.owner.did} \n- Asset: ${asset}`
+      );
+
+      const metaDataPromises = nfts.map(nft => nft.getMetadata());
+      const imagePromises = nfts.map(nft => nft.getImageUri());
+
+      const metadata = await Promise.all(metaDataPromises);
+      const images = await Promise.all(imagePromises);
+
+      for (let i = 0; i < nfts.length; i++) {
+        console.log(`- NFT ${nfts[i].id}: ${metadata[i]}\n- Image: ${images[i]}`);
+        if (metadata[i].length > 0) {
+          console.log('- Metadata:');
+          metadata[i].forEach(m => console.log(`${m.key}: ${m.value}`));
+        }
+      }
+    }
+  }
 
   const authorizeQ = await instruction.affirm();
 

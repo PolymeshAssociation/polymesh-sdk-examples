@@ -24,7 +24,7 @@ import { getClient } from '~/common/client';
 
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const identity = (await api.getSigningIdentity())!;
-  const asset = await api.assets.getAsset({ ticker });
+  const asset = await api.assets.getFungibleAsset({ ticker });
 
   const fundingPortfolio = await identity.portfolios.getPortfolio();
   const purchasePortfolio = await identity.portfolios.getPortfolio({

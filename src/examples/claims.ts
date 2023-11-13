@@ -1,27 +1,13 @@
-import { ClaimData, ClaimType, ScopeType } from '@polymeshassociation/polymesh-sdk/types';
+import { ClaimType, ScopeType } from '@polymeshassociation/polymesh-sdk/types';
 
 import { getClient } from '~/common/client';
-
-/**
- * @hidden
- */
-const renderClaim = ({ target, issuer, issuedAt, expiry, claim }: ClaimData, pos: number): void => {
-  console.log(`Claim #${pos} ${issuedAt ? `issued at ${issuedAt}` : ``}`);
-  console.log(`Target: ${target.did}`);
-  console.log(`Issuer: ${issuer.did}`);
-  if (expiry) {
-    console.log(`Expiry date: ${expiry}`);
-  }
-  console.log(`Claim: ${claim.type}`);
-  console.log('\n');
-};
+import { renderClaim } from '~/common/utils';
 
 /*
   This script showcases Claim related functionality. It:
     - Add a claim
     - Revoke a claim
     - Get CDD claims
-    - Get uniqueness investor claims
     - Get claims targeting a given Identity
     - Get claims issued by given Identity
 */
@@ -78,13 +64,6 @@ const renderClaim = ({ target, issuer, issuedAt, expiry, claim }: ClaimData, pos
 
   console.log('List of CDD claims for the signing Identity:\n');
   cddClaims.forEach((claim, i) => {
-    renderClaim(claim, i + 1);
-  });
-
-  const investorUniquenessClaims = await api.claims.getInvestorUniquenessClaims();
-
-  console.log('List of InvestorUniqueness claims for the signing Identity:\n');
-  investorUniquenessClaims.forEach((claim, i) => {
     renderClaim(claim, i + 1);
   });
 

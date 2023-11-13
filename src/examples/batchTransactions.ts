@@ -1,6 +1,10 @@
 import { BigNumber } from '@polymeshassociation/polymesh-sdk';
-import { Asset, KnownAssetType } from '@polymeshassociation/polymesh-sdk/types';
-import { isAsset, isPolymeshTransactionBatch } from '@polymeshassociation/polymesh-sdk/utils';
+import { FungibleAsset } from '@polymeshassociation/polymesh-sdk/internal';
+import { KnownAssetType } from '@polymeshassociation/polymesh-sdk/types';
+import {
+  isFungibleAsset,
+  isPolymeshTransactionBatch,
+} from '@polymeshassociation/polymesh-sdk/utils';
 import P from 'bluebird';
 
 import { getClient } from '~/common/client';
@@ -62,7 +66,7 @@ import { getClient } from '~/common/client';
     assetType: KnownAssetType.EquityCommon,
   });
 
-  if (isPolymeshTransactionBatch<Asset>(batchTx3)) {
+  if (isPolymeshTransactionBatch<FungibleAsset>(batchTx3)) {
     const transactions = batchTx3.splitTransactions();
 
     // Transactions MUST be run in strict order, waiting for one to finalize before running the next.
@@ -70,7 +74,7 @@ import { getClient } from '~/common/client';
       const result = await tx.run();
 
       // The original result of the batch is returned only by the last transaction in the split array
-      if (isAsset(result)) {
+      if (result && isFungibleAsset(result)) {
         console.log(`Asset with ticker ${result.ticker} created`);
       }
     });

@@ -21,7 +21,7 @@ import { parseArgs } from '~/common/utils';
   const identity = (await api.getSigningIdentity())!;
   console.log(`Connected! Signing Identity ID: ${identity.did}`);
 
-  const asset = await api.assets.getAsset({ ticker });
+  const asset = await api.assets.getFungibleAsset({ ticker });
 
   console.log(`Preparing to list token holders for ${ticker}`);
 

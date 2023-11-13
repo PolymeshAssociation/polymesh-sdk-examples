@@ -30,7 +30,7 @@ import { getClient } from '~/common/client';
     throw new Error('Please supply a ticker as an argument to the script');
   }
 
-  const asset = await api.assets.getAsset({ ticker });
+  const asset = await api.assets.getFungibleAsset({ ticker });
   console.log(`Asset found! Current asset name is: ${(await asset.details()).name}`);
 
   const originPortfolio = await identity.portfolios.getPortfolio({ portfolioId: new BigNumber(1) });
