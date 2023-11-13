@@ -4,6 +4,10 @@ import { Identity } from '@polymeshassociation/polymesh-sdk/types';
 import { getClient } from '~/common/client';
 import { parseArgs } from '~/common/utils';
 
+type ScriptArgs = {
+  account: string;
+};
+
 /*
   This script showcases how to interact with Subsidy, it
   - grants a subsidy to an account
@@ -95,7 +99,3 @@ import { parseArgs } from '~/common/utils';
   console.log('Disconnecting from the node...\n');
   await api.disconnect();
 })();
-
-type ScriptArgs = {
-  account: string;
-};

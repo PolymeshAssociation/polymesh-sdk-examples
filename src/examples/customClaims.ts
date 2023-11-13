@@ -3,10 +3,14 @@ import { ClaimType, ScopeType } from '@polymeshassociation/polymesh-sdk/types';
 import { getClient } from '~/common/client';
 import { parseArgs, renderClaim } from '~/common/utils';
 
+type ScriptArgs = {
+  name?: string;
+};
+
 /*
   This script showcases how to create a CustomClaimType and issue and revoke a CustomClaim
 
-  Usage e.g: yarn run-example ./src/examples/customClaim.ts name=SomeClaimTypeName
+  Usage e.g: yarn run-example ./src/examples/customClaims.ts name=SomeClaimTypeName
 */
 (async (): Promise<void> => {
   const { name } = parseArgs<ScriptArgs>(process.argv.slice(2));
@@ -33,21 +37,29 @@ import { parseArgs, renderClaim } from '~/common/utils';
 
   const customClaimTypeId = await registerCustomClaimTypeQ.run();
 
-  console.log(`Registered Custom Claim Type ID: ${customClaimTypeId}`);
+  console.log(`Registered Custom Claim Type ID: ${customClaimTypeId} \n`);
 
-  // get a CustomClaimType by name
+  // get a CustomClaimType by Name
   const claimTypeByName = await api.claims.getCustomClaimTypeByName(name);
 
   console.log(
     `Custom Claim Type By Name result - id: ${claimTypeByName?.id}, name: ${claimTypeByName?.name}`
   );
 
-  // get a CustomClaimType by name
+  // get a CustomClaimType by ID
   const claimTypeById = await api.claims.getCustomClaimTypeById(customClaimTypeId);
 
   console.log(
-    `Custom Claim Type By Name result - id: ${claimTypeById?.id}, name: ${claimTypeById?.name}`
+    `Custom Claim Type By ID result - ID: ${claimTypeById?.id}, name: ${claimTypeById?.name}`
   );
+
+  // get all registered CustomClaimTypes (requires Middleware V2)
+  const registeredCustomClaimTypes = await api.claims.getAllCustomClaimTypes();
+
+  console.log('List of registered Custom Claim Types:\n');
+  for (const claimType of registeredCustomClaimTypes.data) {
+    console.log(`Registered Custom Claim Type - ID: ${claimType.id}, name: ${claimType.name}`);
+  }
 
   const addQ = await api.claims.addClaims({
     claims: [
@@ -105,7 +117,3 @@ import { parseArgs, renderClaim } from '~/common/utils';
 
   await api.disconnect();
 })();
-
-type ScriptArgs = {
-  name?: string;
-};

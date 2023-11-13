@@ -3,6 +3,11 @@ import { BigNumber } from '@polymeshassociation/polymesh-sdk';
 import { getClient } from '~/common/client';
 import { parseArgs } from '~/common/utils';
 
+type ScriptArgs = {
+  amount?: number;
+  ticker?: string;
+};
+
 /*
   This script showcases how to issue tokens for an Asset.
 
@@ -42,8 +47,3 @@ import { parseArgs } from '~/common/utils';
 
   await api.disconnect();
 })();
-
-type ScriptArgs = {
-  amount?: number;
-  ticker?: string;
-};

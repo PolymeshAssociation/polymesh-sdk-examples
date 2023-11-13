@@ -1,6 +1,10 @@
 import { getClient } from '~/common/client';
 import { parseArgs } from '~/common/utils';
 
+type ScriptArgs = {
+  ticker?: string;
+};
+
 /*
   This script showcases how get list of Asset holders.
 
@@ -38,6 +42,3 @@ import { parseArgs } from '~/common/utils';
   await api.disconnect();
 })();
 
-type ScriptArgs = {
-  ticker?: string;
-};
