@@ -1,6 +1,10 @@
 import { getClient } from '~/common/client';
 import { parseArgs } from '~/common/utils';
 
+type ScriptArgs = {
+  ticker?: string;
+};
+
 /*
   This script showcases how get list of Asset holders.
 
@@ -21,7 +25,7 @@ import { parseArgs } from '~/common/utils';
   const identity = (await api.getSigningIdentity())!;
   console.log(`Connected! Signing Identity ID: ${identity.did}`);
 
-  const asset = await api.assets.getAsset({ ticker });
+  const asset = await api.assets.getFungibleAsset({ ticker });
 
   console.log(`Preparing to list token holders for ${ticker}`);
 
@@ -38,6 +42,3 @@ import { parseArgs } from '~/common/utils';
   await api.disconnect();
 })();
 
-type ScriptArgs = {
-  ticker?: string;
-};

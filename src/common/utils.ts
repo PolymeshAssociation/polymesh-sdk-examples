@@ -1,4 +1,5 @@
 import { BigNumber } from '@polymeshassociation/polymesh-sdk';
+import { ClaimData, FungibleLeg, Leg, NftLeg } from '@polymeshassociation/polymesh-sdk/types';
 import { isEntity } from '@polymeshassociation/polymesh-sdk/utils';
 
 /**
@@ -42,3 +43,35 @@ export function parseArgs<T>(args: string[]): T {
 
   return parsedArgs as T;
 }
+
+/**
+ * @hidden
+ */
+export const renderClaim = (
+  { target, issuer, issuedAt, expiry, claim }: ClaimData,
+  pos: number
+): void => {
+  const issuedAtText = issuedAt ? `issued at ${issuedAt}` : '';
+  console.log(`Claim #${pos} ${issuedAtText}`);
+  console.log(`Target: ${target.did}`);
+  console.log(`Issuer: ${issuer.did}`);
+  if (expiry) {
+    console.log(`Expiry date: ${expiry}`);
+  }
+  console.log(`Claim: ${claim.type}`);
+  console.log('\n');
+};
+
+/**
+ * @hidden
+ */
+export const isFungibleLeg = (leg: Leg): leg is FungibleLeg => {
+  return (leg as FungibleLeg).amount !== undefined;
+};
+
+/**
+ * @hidden
+ */
+export const isNftLeg = (leg: Leg): leg is NftLeg => {
+  return (leg as NftLeg).nfts !== undefined;
+};

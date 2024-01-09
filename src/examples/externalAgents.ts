@@ -146,7 +146,7 @@ import { getClient } from '~/common/client';
   // Retrieves all the Assets over which this Identity has permissions
 
   const permissions = await identity.assetPermissions.get();
-  permissions.map(({ asset, group }) => {
+  permissions.forEach(({ asset, group }) => {
     console.log(`${asset} - ${'type' in group ? group.type : group.id}`);
   });
 

@@ -1,6 +1,3 @@
-import { BigNumber } from '@polymeshassociation/polymesh-sdk';
-import { CalendarUnit } from '@polymeshassociation/polymesh-sdk/types';
-
 import { getClient } from '~/common/client';
 
 /*
@@ -28,7 +25,7 @@ import { getClient } from '~/common/client';
     throw new Error('Please supply a ticker as an argument to the script');
   }
 
-  const asset = await api.assets.getAsset({ ticker });
+  const asset = await api.assets.getFungibleAsset({ ticker });
   console.log(`Asset found! Current asset name is: ${(await asset.details()).name}`);
 
   const createQ = await asset.checkpoints.create();
@@ -59,17 +56,13 @@ import { getClient } from '~/common/client';
   const tomorrow = new Date();
   tomorrow.setDate(tomorrow.getDate() + 1);
   const createScheduleQ = await asset.checkpoints.schedules.create({
-    start: tomorrow,
-    period: { unit: CalendarUnit.Week, amount: new BigNumber(1) },
-    repetitions: new BigNumber(5),
+    points: [tomorrow],
   });
   const newSchedule = await createScheduleQ.run();
-  console.log('New schedule has been created:');
 
+  console.log('New schedule has been created:');
   console.log(`- Id: ${newSchedule.id}`);
   console.log(`- Ticker: ${newSchedule.asset.ticker}`);
-  console.log(`- Start: ${newSchedule.start}`);
-  console.log(`- Period: ${newSchedule.period}`);
   console.log(`- Expiry date: ${newSchedule.expiryDate}`);
 
   const { nextCheckpointDate, remainingCheckpoints } = await newSchedule.details();

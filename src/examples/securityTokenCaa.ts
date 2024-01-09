@@ -21,7 +21,7 @@ import { getClient } from '~/common/client';
     throw new Error('Please supply a ticker as an argument to the script');
   }
 
-  const asset = await api.assets.getAsset({ ticker });
+  const asset = await api.assets.getFungibleAsset({ ticker });
   const corporateActionAgents = await asset.corporateActions.getAgents();
 
   if (corporateActionAgents.length) {

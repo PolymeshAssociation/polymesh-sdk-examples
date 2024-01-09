@@ -52,7 +52,7 @@ import { getClient } from '~/common/client';
   let asset: Asset;
 
   try {
-    asset = await api.assets.getAsset({ ticker });
+    asset = await api.assets.getFungibleAsset({ ticker });
   } catch (e) {
     const assetQ = await api.assets.createAsset({
       ticker,

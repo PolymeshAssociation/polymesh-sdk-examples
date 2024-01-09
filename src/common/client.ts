@@ -15,7 +15,7 @@ export async function getClient(mnemonic?: string): Promise<Polymesh> {
     api = await Polymesh.connect({
       /* eslint-disable @typescript-eslint/no-non-null-assertion */
       nodeUrl: process.env.POLYMESH_NODE_URL!,
-      middleware: {
+      middlewareV2: {
         link: process.env.MIDDLEWARE_LINK!,
         key: process.env.MIDDLEWARE_KEY!,
         /* eslint-enable @typescript-eslint/no-non-null-assertion */
