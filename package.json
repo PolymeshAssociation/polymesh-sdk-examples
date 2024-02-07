@@ -28,6 +28,7 @@
     "@typescript-eslint/eslint-plugin": "6.5.0",
     "@typescript-eslint/parser": "6.5.0",
     "cross-env": "^7.0.3",
+    "@zerollup/ts-transform-paths": "^1.7.11",
     "cz-conventional-changelog": "^3.0.2",
     "eslint": "^8.48.0",
     "eslint-config-prettier": "^9.0.0",
@@ -53,9 +54,27 @@
   },
   "dependencies": {
     "@polymeshassociation/local-signing-manager": "^3.1.0",
-    "@polymeshassociation/polymesh-sdk": "23.0.0",
+    "@polymeshassociation/polymesh-sdk": "24.0.0-confidential-assets.1",
     "bluebird": "^3.7.2",
     "dotenv": "^16.0.3"
+  },
+  "resolutions": {
+    "@polkadot/keyring": "12.4.2",
+    "@polkadot/api-augment": "10.9.1",
+    "@polkadot/api-base": "10.9.1",
+    "@polkadot/api-derive": "10.9.1",
+    "@polkadot/rpc-augment": "10.9.1",
+    "@polkadot/rpc-core": "10.9.1",
+    "@polkadot/rpc-provider": "10.9.1",
+    "@polkadot/types": "10.9.1",
+    "@polkadot/types-augment": "10.9.1",
+    "@polkadot/types-codec": "10.9.1",
+    "@polkadot/types-create": "10.9.1",
+    "@polkadot/types-known": "10.9.1",
+    "@polkadot/util": "12.4.2",
+    "@polkadot/networks": "12.4.2",
+    "@polkadot/util-crypto": "12.4.2",
+    "@polkadot/x-bigint": "12.4.2"
   },
   "config": {
     "commitizen": {
