@@ -1,5 +1,5 @@
 import { LocalSigningManager } from '@polymeshassociation/local-signing-manager';
-import { Polymesh } from '@polymeshassociation/polymesh-sdk';
+import { ConfidentialPolymesh as Polymesh } from '@polymeshassociation/polymesh-private-sdk';
 
 let api: Polymesh;
 
@@ -14,7 +14,7 @@ export async function getClient(mnemonic?: string): Promise<Polymesh> {
   if (!api) {
     api = await Polymesh.connect({
       /* eslint-disable @typescript-eslint/no-non-null-assertion */
-      nodeUrl: process.env.POLYMESH_NODE_URL!,
+      nodeUrl: process.env.POLYMESH_PRIVATE_NODE_URL!,
       // middlewareV2: {
       //   link: process.env.MIDDLEWARE_LINK!,
       //   key: process.env.MIDDLEWARE_KEY!,

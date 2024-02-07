@@ -12,6 +12,9 @@
         "exclude": ["*"]
       }
     ],
+    "useUnknownInCatchVariables": false,
+    "noImplicitOverride": true,
+    "moduleResolution": "node",
     "target": "es6",
     "module": "commonjs",
     "declaration": true,
@@ -19,8 +22,8 @@
     "sourceMap": true,
     "strict": true,
     "esModuleInterop": true,
-    "skipLibCheck": true,
     "resolveJsonModule": true,
+    "skipLibCheck": true,
     "lib": ["es2017", "dom"],
     "typeRoots": ["./node_modules/@types", "./src/typings"]
   },
