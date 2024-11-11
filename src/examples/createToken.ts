@@ -44,7 +44,7 @@ import { getClient } from '~/common/client';
   console.log('Creating Asset...\n');
   const asset = await creationQ.run();
 
-  console.log(`Assigning a list of documents to ${ticker}...\n`);
+  console.log(`Assigning a list of documents to ${asset.id}...\n`);
 
   const doc1 = {
     name: 'Document One',

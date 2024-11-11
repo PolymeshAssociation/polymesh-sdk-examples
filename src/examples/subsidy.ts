@@ -36,7 +36,7 @@ type ScriptArgs = {
   // get subsidizer account
   const { account: subsidizer } = await identity.getPrimaryAccount();
 
-  // granting a subsidy to beneficary
+  // granting a subsidy to beneficiary
   const subsidyGrantQ = await api.accountManagement.subsidizeAccount({
     beneficiary,
     allowance: new BigNumber(1000),

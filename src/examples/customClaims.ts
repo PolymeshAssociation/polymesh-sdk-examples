@@ -70,8 +70,8 @@ type ScriptArgs = {
           type: ClaimType.Custom,
           customClaimTypeId,
           scope: {
-            type: ScopeType.Ticker,
-            value: 'SOME_TICKER',
+            type: ScopeType.Asset,
+            value: '0x80df7c052682e2eaad949f225609f2dc',
           },
         },
       },
@@ -97,8 +97,8 @@ type ScriptArgs = {
           type: ClaimType.Custom,
           customClaimTypeId,
           scope: {
-            type: ScopeType.Ticker,
-            value: 'SOME_TICKER',
+            type: ScopeType.Asset,
+            value: '0x80df7c052682e2eaad949f225609f2dc',
           },
         },
       },

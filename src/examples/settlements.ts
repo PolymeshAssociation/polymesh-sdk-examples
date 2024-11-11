@@ -46,7 +46,7 @@ import { isFungibleLeg, isNftLeg } from '~/common/utils';
         to: identity, // passing the Identity (or did) means the default portfolio will be used
         from: destinationPortfolio, // or you can pass a Portfolio
         amount: new BigNumber(1000),
-        asset: 'MY_TOKEN',
+        asset: '0x9226abfd9c2d8b8583ab0b350cf44d0f',
       },
     ],
     endBlock: new BigNumber(10000000),
@@ -87,8 +87,8 @@ import { isFungibleLeg, isNftLeg } from '~/common/utils';
         `- Nft Leg:\n- From: ${from.owner.did}\n- To: ${to.owner.did} \n- Asset: ${asset}`
       );
 
-      const metaDataPromises = nfts.map(nft => nft.getMetadata());
-      const imagePromises = nfts.map(nft => nft.getImageUri());
+      const metaDataPromises = nfts.map((nft) => nft.getMetadata());
+      const imagePromises = nfts.map((nft) => nft.getImageUri());
 
       const metadata = await Promise.all(metaDataPromises);
       const images = await Promise.all(imagePromises);
@@ -97,7 +97,7 @@ import { isFungibleLeg, isNftLeg } from '~/common/utils';
         console.log(`- NFT ${nfts[i].id}: ${metadata[i]}\n- Image: ${images[i]}`);
         if (metadata[i].length > 0) {
           console.log('- Metadata:');
-          metadata[i].forEach(m => console.log(`${m.key}: ${m.value}`));
+          metadata[i].forEach((m) => console.log(`${m.key}: ${m.value}`));
         }
       }
     }

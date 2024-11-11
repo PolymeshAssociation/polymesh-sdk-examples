@@ -1,8 +1,9 @@
 import { BigNumber } from '@polymeshassociation/polymesh-sdk';
-import { TargetTreatment } from '@polymeshassociation/polymesh-sdk/types';
+import { FungibleAsset, TargetTreatment } from '@polymeshassociation/polymesh-sdk/types';
 import { isCheckpoint } from '@polymeshassociation/polymesh-sdk/utils';
 
 import { getClient } from '~/common/client';
+import { isAssetId } from '~/common/utils';
 
 /*
   This script showcases Dividend Distribution related functionality. It:
@@ -24,13 +25,18 @@ import { getClient } from '~/common/client';
   const identity = (await api.getSigningIdentity())!;
   console.log(`Connected! Signing Identity ID: ${identity.did}`);
 
-  const ticker = process.argv[2];
+  const assetInput = process.argv[2];
 
-  if (!ticker) {
-    throw new Error('Please supply a ticker as an argument to the script');
+  if (!assetInput) {
+    throw new Error('Please supply a ticker or Asset Id as an argument to the script');
   }
 
-  const asset = await api.assets.getFungibleAsset({ ticker });
+  let asset: FungibleAsset;
+  if (isAssetId(assetInput)) {
+    asset = await api.assets.getFungibleAsset({ assetId: assetInput });
+  } else {
+    asset = await api.assets.getFungibleAsset({ ticker: assetInput });
+  }
   console.log(`Asset found! Current asset name is: ${(await asset.details()).name}`);
 
   const originPortfolio = await identity.portfolios.getPortfolio({ portfolioId: new BigNumber(1) });
@@ -43,7 +49,7 @@ import { getClient } from '~/common/client';
   const createQ = await asset.corporateActions.distributions.configureDividendDistribution({
     checkpoint: checkpointDate,
     originPortfolio, // optional, defaults to the CAA's default portfolio
-    currency: 'USD',
+    currency: '0xafacdf5f5f368b6790bd807aed1bf2e4',
     perShare: new BigNumber(10),
     maxAmount: new BigNumber(500),
     paymentDate: nextMonth,

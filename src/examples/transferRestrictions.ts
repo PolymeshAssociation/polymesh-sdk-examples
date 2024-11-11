@@ -1,6 +1,8 @@
 import { BigNumber } from '@polymeshassociation/polymesh-sdk';
+import { FungibleAsset } from '@polymeshassociation/polymesh-sdk/types';
 
 import { getClient } from '~/common/client';
+import { isAssetId } from '~/common/utils';
 
 /*
   This script showcases Transfer Restriction related functionality. It:
@@ -14,13 +16,19 @@ import { getClient } from '~/common/client';
   console.log('Connecting to the node...\n\n');
   const api = await getClient(process.env.ACCOUNT_SEED);
 
-  const ticker = process.argv[2];
+  const assetInput = process.argv[2];
 
-  if (!ticker) {
-    throw new Error('Please supply a ticker as an argument to the script');
+  if (!assetInput) {
+    throw new Error('Please supply a ticker or Asset ID as an argument to the script');
   }
 
-  const asset = await api.assets.getFungibleAsset({ ticker });
+  let asset: FungibleAsset;
+
+  if (isAssetId(assetInput)) {
+    asset = await api.assets.getFungibleAsset({ assetId: assetInput });
+  } else {
+    asset = await api.assets.getFungibleAsset({ ticker: assetInput });
+  }
 
   const addCountRestrictionQ = await asset.transferRestrictions.count.addRestriction({
     count: new BigNumber(10),

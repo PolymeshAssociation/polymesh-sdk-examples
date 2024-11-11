@@ -1,11 +1,13 @@
 import { BigNumber } from '@polymeshassociation/polymesh-sdk';
 import {
+  FungibleAsset,
   OfferingBalanceStatus,
   OfferingSaleStatus,
   OfferingTimingStatus,
 } from '@polymeshassociation/polymesh-sdk/types';
 
 import { getClient } from '~/common/client';
+import { isAssetId } from '~/common/utils';
 
 /*
   This script showcases Offering investment functionality. It:
@@ -16,15 +18,20 @@ import { getClient } from '~/common/client';
   console.log('Connecting to the node...\n\n');
   const api = await getClient(process.env.ACCOUNT_SEED);
 
-  const ticker = process.argv[2];
+  const assetInput = process.argv[2];
 
-  if (!ticker) {
-    throw new Error('Please supply a ticker as an argument to the script');
+  if (!assetInput) {
+    throw new Error('Please supply a ticker or Asset ID as an argument to the script');
   }
 
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const identity = (await api.getSigningIdentity())!;
-  const asset = await api.assets.getFungibleAsset({ ticker });
+  let asset: FungibleAsset;
+  if (isAssetId(assetInput)) {
+    asset = await api.assets.getFungibleAsset({ assetId: assetInput });
+  } else {
+    asset = await api.assets.getFungibleAsset({ ticker: assetInput });
+  }
 
   const fundingPortfolio = await identity.portfolios.getPortfolio();
   const purchasePortfolio = await identity.portfolios.getPortfolio({

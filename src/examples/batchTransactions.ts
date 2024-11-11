@@ -1,10 +1,7 @@
 import { BigNumber } from '@polymeshassociation/polymesh-sdk';
 import { FungibleAsset } from '@polymeshassociation/polymesh-sdk/internal';
 import { KnownAssetType } from '@polymeshassociation/polymesh-sdk/types';
-import {
-  isFungibleAsset,
-  isPolymeshTransactionBatch,
-} from '@polymeshassociation/polymesh-sdk/utils';
+import { isPolymeshTransactionBatch } from '@polymeshassociation/polymesh-sdk/utils';
 import P from 'bluebird';
 
 import { getClient } from '~/common/client';
@@ -35,7 +32,7 @@ import { getClient } from '~/common/client';
   console.log('Secondary Accounts frozen');
 
   // Batching the same transaction
-  const portfolioTxs = await P.map([1, 2, 3, 4, 5], n => {
+  const portfolioTxs = await P.map([1, 2, 3, 4, 5], (n) => {
     const name = `PORTFOLIO_${n}`;
 
     return api.identities.createPortfolio({
@@ -60,7 +57,7 @@ import { getClient } from '~/common/client';
    */
   const batchTx3 = await api.assets.createAsset({
     name: 'MY_ASSET',
-    ticker: 'MY_TICKER',
+    ticker: 'MY_TICKER', // this is optional while creating an asset from 7.x chain
     isDivisible: true,
     initialSupply: new BigNumber(10000),
     assetType: KnownAssetType.EquityCommon,
@@ -70,18 +67,18 @@ import { getClient } from '~/common/client';
     const transactions = batchTx3.splitTransactions();
 
     // Transactions MUST be run in strict order, waiting for one to finalize before running the next.
-    await P.mapSeries(transactions, async tx => {
+    await P.mapSeries(transactions, async (tx) => {
       const result = await tx.run();
 
       // The original result of the batch is returned only by the last transaction in the split array
-      if (result && isFungibleAsset(result)) {
-        console.log(`Asset with ticker ${result.ticker} created`);
+      if (result) {
+        console.log(`Asset with ID ${result.id} created`);
       }
     });
   } else {
     const result = await batchTx3.run();
 
-    console.log(`Asset with ticker ${result.ticker} created`);
+    console.log(`Asset with ID ${result.id} created`);
   }
 
   await api.disconnect();

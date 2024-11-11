@@ -6,6 +6,7 @@ import {
 } from '@polymeshassociation/polymesh-sdk/types';
 
 import { getClient } from '~/common/client';
+import { isAssetId } from '~/common/utils';
 
 /* 
   This script showcases Metadata related functionality. It:
@@ -26,12 +27,12 @@ import { getClient } from '~/common/client';
   console.log('Connecting to the node...\n');
   const api = await getClient(process.env.ACCOUNT_SEED);
 
-  const ticker = process.argv[2];
+  const assetInput = process.argv[2];
 
-  console.log(ticker);
+  console.log(assetInput);
 
-  if (!ticker) {
-    throw new Error('Please supply a ticker as an argument to the script');
+  if (!assetInput) {
+    throw new Error('Please supply a ticker or Asset ID as an argument to the script');
   }
 
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
@@ -40,7 +41,13 @@ import { getClient } from '~/common/client';
 
   console.log(`\n➡️ Getting Global Asset Metadata Keys`);
 
-  const asset = await api.assets.getAsset({ ticker });
+  let asset;
+
+  if (isAssetId(assetInput)) {
+    asset = await api.assets.getAsset({ assetId: assetInput });
+  } else {
+    asset = await api.assets.getAsset({ ticker: assetInput });
+  }
 
   /**
    * Fetches and displays metadata value
@@ -165,7 +172,7 @@ import { getClient } from '~/common/client';
   console.log('Fetching...');
   const allMetadata = await asset.metadata.get();
 
-  allMetadata.forEach(metadata => console.log(metadata.toHuman()));
+  allMetadata.forEach((metadata) => console.log(metadata.toHuman()));
 
   console.log(`\n✔️ All Metadata Entry fetched`);
 

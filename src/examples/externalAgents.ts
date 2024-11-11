@@ -1,7 +1,8 @@
-import { AssetTx, PermissionType, TxGroup } from '@polymeshassociation/polymesh-sdk/types';
+import { Asset, AssetTx, PermissionType, TxGroup } from '@polymeshassociation/polymesh-sdk/types';
 import P from 'bluebird';
 
 import { getClient } from '~/common/client';
+import { isAssetId } from '~/common/utils';
 
 /*
   This script showcases External Agents related functionality. It:
@@ -24,13 +25,20 @@ import { getClient } from '~/common/client';
   const identity = (await api.getSigningIdentity())!;
   console.log(`Connected! Signing Identity ID: ${identity.did}`);
 
-  const ticker = process.argv[2];
+  const assetInput = process.argv[2];
 
-  if (!ticker) {
+  if (!assetInput) {
     throw new Error('Please supply a ticker as an argument to the script');
   }
 
-  const asset = await api.assets.getAsset({ ticker });
+  let asset: Asset;
+
+  if (isAssetId(assetInput)) {
+    asset = await api.assets.getAsset({ assetId: assetInput });
+  } else {
+    asset = await api.assets.getAsset({ ticker: assetInput });
+  }
+
   const { name } = await asset.details();
   console.log(`Asset found! Current asset name is: ${name}`);
 
@@ -68,7 +76,7 @@ import { getClient } from '~/common/client';
   const { known, custom } = await asset.permissions.getGroups();
 
   console.log(`\nKnown Permission Groups:\n`);
-  await P.each(known, async knownGroup => {
+  await P.each(known, async (knownGroup) => {
     const { transactions, transactionGroups } = await knownGroup.getPermissions();
     console.log(`[${knownGroup.type} Group]`);
     console.log(`Transactions values: ${transactions ? transactions.values : 'ALL'}`);
@@ -131,9 +139,9 @@ import { getClient } from '~/common/client';
   // Retrieves an Identity's Permission Group for a specific Asset
 
   const group = await identity.assetPermissions.getGroup({
-    asset: ticker,
+    asset: asset.id,
   });
-  console.log(`${ticker} - ${'type' in group ? group.type : group.id}`);
+  console.log(`${assetInput} - ${'type' in group ? group.type : group.id}`);
 
   // Assigns an Identity to a different Permission Group
 
@@ -154,7 +162,7 @@ import { getClient } from '~/common/client';
 
   console.log(
     await identity.assetPermissions.checkPermissions({
-      asset: ticker,
+      asset: asset.id,
       transactions: [AssetTx.RenameAsset],
     })
   );
@@ -162,7 +170,7 @@ import { getClient } from '~/common/client';
   // Abdicates from the current Permissions Group for a given Asset
 
   const waiveQ = await identity.assetPermissions.waive({
-    asset: ticker,
+    asset: asset.id,
   });
 
   console.log('Abdicating...');

@@ -1,6 +1,7 @@
 import { PermissionGroupType } from '@polymeshassociation/polymesh-sdk/types';
 
 import { getClient } from '~/common/client';
+import { isAssetId } from '~/common/utils';
 
 /*
   This script demonstrates Asset PIA functionality. It:
@@ -15,13 +16,19 @@ import { getClient } from '~/common/client';
   const identity = (await api.getSigningIdentity())!;
   console.log(`Connected! Signing Identity ID: ${identity.did}`);
 
-  const ticker = process.argv[2];
+  const assetInput = process.argv[2];
 
-  if (!ticker) {
-    throw new Error('Please supply a ticker as an argument to the script');
+  if (!assetInput) {
+    throw new Error('Please supply a ticker or Asset ID as an argument to the script');
   }
 
-  const asset = await api.assets.getAsset({ ticker });
+  let asset;
+
+  if (isAssetId(assetInput)) {
+    asset = await api.assets.getAsset({ assetId: assetInput });
+  } else {
+    asset = await api.assets.getAsset({ ticker: assetInput });
+  }
   const { fullAgents } = await asset.details();
 
   if (fullAgents.length) {

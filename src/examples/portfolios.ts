@@ -29,7 +29,7 @@ import { getClient } from '~/common/client';
     balances.forEach(({ asset, total, locked }) => {
       console.log(
         `Balance of Asset asset ${
-          asset.ticker
+          asset.id
         }:\n- Total: ${total.toFormat()}\n- Locked: ${locked.toFormat()}`
       );
     });

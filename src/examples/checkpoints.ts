@@ -1,4 +1,7 @@
+import { FungibleAsset } from '@polymeshassociation/polymesh-sdk/types';
+
 import { getClient } from '~/common/client';
+import { isAssetId } from '~/common/utils';
 
 /*
   This script showcases Checkpoints related functionality. It:
@@ -19,14 +22,21 @@ import { getClient } from '~/common/client';
   const identity = (await api.getSigningIdentity())!;
   console.log(`Connected! Signing Identity ID: ${identity.did}`);
 
-  const ticker = process.argv[2];
+  const assetInput = process.argv[2];
 
-  if (!ticker) {
-    throw new Error('Please supply a ticker as an argument to the script');
+  if (!assetInput) {
+    throw new Error('Please supply a ticker or Asset Id as an argument to the script');
   }
 
-  const asset = await api.assets.getFungibleAsset({ ticker });
-  console.log(`Asset found! Current asset name is: ${(await asset.details()).name}`);
+  let asset: FungibleAsset;
+  if (isAssetId(assetInput)) {
+    asset = await api.assets.getFungibleAsset({ assetId: assetInput });
+  } else {
+    asset = await api.assets.getFungibleAsset({ ticker: assetInput });
+  }
+
+  const details = await asset.details();
+  console.log(`Asset found! Current asset name is: ${details.name}`);
 
   const createQ = await asset.checkpoints.create();
   const newCheckpoint = await createQ.run();
@@ -38,7 +48,7 @@ import { getClient } from '~/common/client';
 
   console.log('New checkpoint has been created:');
   console.log(`- Id: ${newCheckpoint.id}`);
-  console.log(`- Ticker: ${newCheckpoint.asset.ticker}`);
+  console.log(`- Asset ID: ${newCheckpoint.asset.id}`);
   console.log(`- Created at: ${createdAt}`);
   console.log(`- Total supply: ${totalSupply}`);
 
@@ -62,7 +72,7 @@ import { getClient } from '~/common/client';
 
   console.log('New schedule has been created:');
   console.log(`- Id: ${newSchedule.id}`);
-  console.log(`- Ticker: ${newSchedule.asset.ticker}`);
+  console.log(`- Asset ID: ${newSchedule.asset.id}`);
   console.log(`- Expiry date: ${newSchedule.expiryDate}`);
 
   const { nextCheckpointDate, remainingCheckpoints } = await newSchedule.details();

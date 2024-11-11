@@ -7,7 +7,7 @@ import {
 } from '@polymeshassociation/polymesh-sdk/types';
 
 import { getClient } from '~/common/client';
-import { toHumanObject } from '~/common/utils';
+import { isAssetId, toHumanObject } from '~/common/utils';
 
 /*
   This script showcases Compliance related functionality. Covered functionality:
@@ -30,14 +30,20 @@ import { toHumanObject } from '~/common/utils';
   const identity = (await api.getSigningIdentity())!;
   console.log(`Connected! Signing Identity ID: ${identity.did}`);
 
-  const inputTicker = process.argv[2];
+  const assetInput = process.argv[2];
 
-  if (!inputTicker) {
-    throw new Error('Please supply a ticker as an argument to the script');
+  if (!assetInput) {
+    throw new Error('Please supply a ticker or Asset ID as an argument to the script');
   }
 
   // Get Asset for the given ticker
-  const asset = await api.assets.getAsset({ ticker: inputTicker });
+  let asset;
+
+  if (isAssetId(assetInput)) {
+    asset = await api.assets.getAsset({ assetId: assetInput });
+  } else {
+    asset = await api.assets.getAsset({ ticker: assetInput });
+  }
 
   console.log(`\n\nAsset found! Current asset name is: ${(await asset.details()).name}`);
 
@@ -70,8 +76,8 @@ import { toHumanObject } from '~/common/utils';
           claim: {
             type: ClaimType.Accredited,
             scope: {
-              type: ScopeType.Ticker,
-              value: 'ROMANIA12345',
+              type: ScopeType.Asset,
+              value: '0x80df7c052682e2eaad949f225609f2dc',
             },
           },
           target: ConditionTarget.Both,
@@ -106,8 +112,8 @@ import { toHumanObject } from '~/common/utils';
         claim: {
           type: ClaimType.Blocked,
           scope: {
-            type: ScopeType.Ticker,
-            value: inputTicker,
+            type: ScopeType.Asset,
+            value: assetInput,
           },
         },
         target: ConditionTarget.Both,

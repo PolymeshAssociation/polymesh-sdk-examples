@@ -1,6 +1,6 @@
 import { BigNumber } from '@polymeshassociation/polymesh-sdk';
 import { ClaimData, FungibleLeg, Leg, NftLeg } from '@polymeshassociation/polymesh-sdk/types';
-import { isEntity } from '@polymeshassociation/polymesh-sdk/utils';
+import { isEntity, isHexUuid, isUuid } from '@polymeshassociation/polymesh-sdk/utils';
 
 /**
  * @hidden
@@ -74,4 +74,11 @@ export const isFungibleLeg = (leg: Leg): leg is FungibleLeg => {
  */
 export const isNftLeg = (leg: Leg): leg is NftLeg => {
   return (leg as NftLeg).nfts !== undefined;
+};
+
+/**
+ * @hidden
+ */
+export const isAssetId = (asset: string): boolean => {
+  return isUuid(asset) || isHexUuid(asset);
 };

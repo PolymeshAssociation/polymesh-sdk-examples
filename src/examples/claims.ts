@@ -22,6 +22,12 @@ import { renderClaim } from '~/common/utils';
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const bobDid = process.env.BOB_DID!;
 
+  const assetInput = process.argv[2];
+
+  if (!assetInput) {
+    throw new Error('Please supply a Asset ID as an argument to the script');
+  }
+
   const addQ = await api.claims.addClaims({
     claims: [
       {
@@ -30,8 +36,8 @@ import { renderClaim } from '~/common/utils';
         claim: {
           type: ClaimType.Accredited,
           scope: {
-            type: ScopeType.Ticker,
-            value: 'SOME_TICKER',
+            type: ScopeType.Asset,
+            value: assetInput,
           },
         },
       },
@@ -49,8 +55,8 @@ import { renderClaim } from '~/common/utils';
         claim: {
           type: ClaimType.Accredited,
           scope: {
-            type: ScopeType.Ticker,
-            value: 'SOME_TICKER',
+            type: ScopeType.Asset,
+            value: assetInput,
           },
         },
       },

@@ -1,4 +1,5 @@
 import { getClient } from '~/common/client';
+import { isAssetId } from '~/common/utils';
 
 /* 
   This script retrieves the balance of a specific asset
@@ -8,19 +9,24 @@ import { getClient } from '~/common/client';
   console.log('Connecting to the node...\n\n');
   const api = await getClient(process.env.ACCOUNT_SEED);
 
-  const ticker = process.argv[2];
+  const asset = process.argv[2];
 
-  if (!ticker) {
-    throw new Error('Please supply a ticker as an argument to the script');
+  if (!asset) {
+    throw new Error('Please supply a ticker / Asset ID as an argument to the script');
   }
 
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const identity = (await api.getSigningIdentity())!;
   console.log(`Connected! Signing Identity ID: ${identity.did}`);
 
-  const balance = await identity.getAssetBalance({ ticker });
+  let balance;
+  if (isAssetId(asset)) {
+    balance = await identity.getAssetBalance({ assetId: asset });
+  } else {
+    balance = await identity.getAssetBalance({ ticker: asset });
+  }
 
-  console.log(`Balance of "${ticker}" is ${balance.toFormat()}`);
+  console.log(`Balance of "${asset}" is ${balance.toFormat()}`);
 
   await api.disconnect();
 })();
