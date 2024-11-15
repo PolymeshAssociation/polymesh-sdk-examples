@@ -6,8 +6,9 @@ import {
   ScopeType,
 } from '@polymeshassociation/polymesh-sdk/types';
 
+import { getAsset } from '~/common/assets';
 import { getClient } from '~/common/client';
-import { isAssetId, toHumanObject } from '~/common/utils';
+import { toHumanObject } from '~/common/utils';
 
 /*
   This script showcases Compliance related functionality. Covered functionality:
@@ -36,14 +37,7 @@ import { isAssetId, toHumanObject } from '~/common/utils';
     throw new Error('Please supply a ticker or Asset ID as an argument to the script');
   }
 
-  // Get Asset for the given ticker
-  let asset;
-
-  if (isAssetId(assetInput)) {
-    asset = await api.assets.getAsset({ assetId: assetInput });
-  } else {
-    asset = await api.assets.getAsset({ ticker: assetInput });
-  }
+  const asset = await getAsset(api, assetInput);
 
   console.log(`\n\nAsset found! Current asset name is: ${(await asset.details()).name}`);
 

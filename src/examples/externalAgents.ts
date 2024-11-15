@@ -1,8 +1,8 @@
-import { Asset, AssetTx, PermissionType, TxGroup } from '@polymeshassociation/polymesh-sdk/types';
+import { AssetTx, PermissionType, TxGroup } from '@polymeshassociation/polymesh-sdk/types';
 import P from 'bluebird';
 
+import { getAsset } from '~/common/assets';
 import { getClient } from '~/common/client';
-import { isAssetId } from '~/common/utils';
 
 /*
   This script showcases External Agents related functionality. It:
@@ -31,13 +31,7 @@ import { isAssetId } from '~/common/utils';
     throw new Error('Please supply a ticker as an argument to the script');
   }
 
-  let asset: Asset;
-
-  if (isAssetId(assetInput)) {
-    asset = await api.assets.getAsset({ assetId: assetInput });
-  } else {
-    asset = await api.assets.getAsset({ ticker: assetInput });
-  }
+  const asset = await getAsset(api, assetInput);
 
   const { name } = await asset.details();
   console.log(`Asset found! Current asset name is: ${name}`);

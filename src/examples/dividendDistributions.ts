@@ -1,9 +1,9 @@
 import { BigNumber } from '@polymeshassociation/polymesh-sdk';
-import { FungibleAsset, TargetTreatment } from '@polymeshassociation/polymesh-sdk/types';
+import { TargetTreatment } from '@polymeshassociation/polymesh-sdk/types';
 import { isCheckpoint } from '@polymeshassociation/polymesh-sdk/utils';
 
+import { getFungibleAsset } from '~/common/assets';
 import { getClient } from '~/common/client';
-import { isAssetId } from '~/common/utils';
 
 /*
   This script showcases Dividend Distribution related functionality. It:
@@ -31,12 +31,7 @@ import { isAssetId } from '~/common/utils';
     throw new Error('Please supply a ticker or Asset Id as an argument to the script');
   }
 
-  let asset: FungibleAsset;
-  if (isAssetId(assetInput)) {
-    asset = await api.assets.getFungibleAsset({ assetId: assetInput });
-  } else {
-    asset = await api.assets.getFungibleAsset({ ticker: assetInput });
-  }
+  const asset = await getFungibleAsset(api, assetInput);
   console.log(`Asset found! Current asset name is: ${(await asset.details()).name}`);
 
   const originPortfolio = await identity.portfolios.getPortfolio({ portfolioId: new BigNumber(1) });

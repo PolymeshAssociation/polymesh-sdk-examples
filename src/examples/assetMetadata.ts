@@ -5,8 +5,8 @@ import {
   MetadataType,
 } from '@polymeshassociation/polymesh-sdk/types';
 
+import { getAsset } from '~/common/assets';
 import { getClient } from '~/common/client';
-import { isAssetId } from '~/common/utils';
 
 /* 
   This script showcases Metadata related functionality. It:
@@ -41,13 +41,7 @@ import { isAssetId } from '~/common/utils';
 
   console.log(`\n➡️ Getting Global Asset Metadata Keys`);
 
-  let asset;
-
-  if (isAssetId(assetInput)) {
-    asset = await api.assets.getAsset({ assetId: assetInput });
-  } else {
-    asset = await api.assets.getAsset({ ticker: assetInput });
-  }
+  const asset = await getAsset(api, assetInput);
 
   /**
    * Fetches and displays metadata value

@@ -1,7 +1,7 @@
-import { FungibleAsset, ModuleName, PermissionType } from '@polymeshassociation/polymesh-sdk/types';
+import { ModuleName, PermissionType } from '@polymeshassociation/polymesh-sdk/types';
 
+import { getFungibleAsset } from '~/common/assets';
 import { getClient } from '~/common/client';
-import { isAssetId } from '~/common/utils';
 
 /*
   This script demonstrates Asset CAA functionality. It:
@@ -22,12 +22,7 @@ import { isAssetId } from '~/common/utils';
     throw new Error('Please supply a ticker or Asset ID as an argument to the script');
   }
 
-  let asset: FungibleAsset;
-  if (isAssetId(assetInput)) {
-    asset = await api.assets.getFungibleAsset({ assetId: assetInput });
-  } else {
-    asset = await api.assets.getFungibleAsset({ ticker: assetInput });
-  }
+  const asset = await getFungibleAsset(api, assetInput);
   const corporateActionAgents = await asset.corporateActions.getAgents();
 
   if (corporateActionAgents.length) {

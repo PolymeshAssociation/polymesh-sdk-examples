@@ -1,7 +1,6 @@
-import { FungibleAsset } from '@polymeshassociation/polymesh-sdk/types';
-
+import { getFungibleAsset } from '~/common/assets';
 import { getClient } from '~/common/client';
-import { isAssetId, parseArgs } from '~/common/utils';
+import { parseArgs } from '~/common/utils';
 
 type ScriptArgs = {
   asset?: string;
@@ -27,13 +26,7 @@ type ScriptArgs = {
   const identity = (await api.getSigningIdentity())!;
   console.log(`Connected! Signing Identity ID: ${identity.did}`);
 
-  let asset: FungibleAsset;
-
-  if (isAssetId(assetInput)) {
-    asset = await api.assets.getFungibleAsset({ assetId: assetInput });
-  } else {
-    asset = await api.assets.getFungibleAsset({ ticker: assetInput });
-  }
+  const asset = await getFungibleAsset(api, assetInput);
 
   console.log(`Preparing to list token holders for ${asset.id}`);
 

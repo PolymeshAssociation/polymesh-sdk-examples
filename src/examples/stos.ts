@@ -1,8 +1,7 @@
 import { BigNumber } from '@polymeshassociation/polymesh-sdk';
-import { FungibleAsset } from '@polymeshassociation/polymesh-sdk/types';
 
+import { getFungibleAsset } from '~/common/assets';
 import { getClient } from '~/common/client';
-import { isAssetId } from '~/common/utils';
 
 /*
   This script showcases Offering functionality. It:
@@ -26,13 +25,7 @@ import { isAssetId } from '~/common/utils';
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const identity = (await api.getSigningIdentity())!;
 
-  let asset: FungibleAsset;
-
-  if (isAssetId(assetInput)) {
-    asset = await api.assets.getFungibleAsset({ assetId: assetInput });
-  } else {
-    asset = await api.assets.getFungibleAsset({ ticker: assetInput });
-  }
+  const asset = await getFungibleAsset(api, assetInput);
   const [venue] = await identity.getVenues();
 
   const offeringPortfolio = await identity.portfolios.getPortfolio();

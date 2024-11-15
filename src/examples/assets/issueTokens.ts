@@ -1,8 +1,8 @@
 import { BigNumber } from '@polymeshassociation/polymesh-sdk';
-import { FungibleAsset } from '@polymeshassociation/polymesh-sdk/types';
 
+import { getFungibleAsset } from '~/common/assets';
 import { getClient } from '~/common/client';
-import { isAssetId, parseArgs } from '~/common/utils';
+import { parseArgs } from '~/common/utils';
 
 type ScriptArgs = {
   amount?: number;
@@ -18,7 +18,7 @@ type ScriptArgs = {
   const { asset: assetInput, amount } = parseArgs<ScriptArgs>(process.argv.slice(2));
 
   if (!assetInput) {
-    throw new Error('Please supply a ticker as an argument to the script');
+    throw new Error('Please supply a ticker or Asset ID as an argument to the script');
   }
 
   if (!amount) {
@@ -33,13 +33,7 @@ type ScriptArgs = {
   const identity = (await api.getSigningIdentity())!;
   console.log(`Connected! Signing Identity ID: ${identity.did}`);
 
-  let asset: FungibleAsset;
-
-  if (isAssetId(assetInput)) {
-    asset = await api.assets.getFungibleAsset({ assetId: assetInput });
-  } else {
-    asset = await api.assets.getFungibleAsset({ ticker: assetInput });
-  }
+  const asset = await getFungibleAsset(api, assetInput);
 
   console.log(`Preparing to issue ${amount} of tokens for ${asset.id}`);
 
