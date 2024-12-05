@@ -6,10 +6,21 @@ let api: Polymesh;
 /**
  * @hidden
  */
-export async function getClient(mnemonic?: string): Promise<Polymesh> {
-  const localSigningManager = await LocalSigningManager.create({
-    accounts: [mnemonic ? { mnemonic } : { uri: '//Alice' }],
-  });
+export async function getClient(mnemonics?: string | string[]): Promise<Polymesh> {
+  let localSigningManager: LocalSigningManager;
+  if (!mnemonics) {
+    localSigningManager = await LocalSigningManager.create({
+      accounts: [{ uri: '//Alice' }],
+    });
+  } else if (typeof mnemonics === 'string') {
+    localSigningManager = await LocalSigningManager.create({
+      accounts: [{ mnemonic: mnemonics }],
+    });
+  } else {
+    localSigningManager = await LocalSigningManager.create({
+      accounts: mnemonics.map(mnemonic => ({ mnemonic })),
+    });
+  }
 
   if (!api) {
     api = await Polymesh.connect({

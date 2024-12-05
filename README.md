@@ -1,13 +1,13 @@
 ## Description
 
-Example project that demonstrate how to use Polymesh SDK along with some of its use cases
+Example project that demonstrate how to use [Polymesh SDK](https://github.com/PolymeshAssociation/polymesh-sdk) along with some of its use cases
 
 ## Setup
 
 ### Requirements
 
-- node.js version 14.x
-- yarn version 1.x
+- node.js [maintained version] (https://github.com/nodejs/release#release-schedule)
+- yarn version 1.x (your preferred one should still work with minor translations)
 
 ### Installing Dependencies
 
