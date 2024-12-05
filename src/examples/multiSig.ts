@@ -76,27 +76,6 @@ import { getClient } from '~/common/client';
 
   await Promise.all([await signerOneAccept.run(), await signerTwoAccept.run()]);
   console.log('👥 Signers accepted the MultiSig authorization\n');
-  /**
-   * Before the MultiSig can perform actions it needs to be associated with a CDD claim
-   *
-   * Here we use a convenience method to attach the MultiSig directly to the creator account.
-   * To attach to a different DID the MultiSig can be treated like any other account and be
-   * targeted with `api.accountManagement.inviteAccount`.
-   *
-   * The creator's primary key is always responsible for the MultiSig's fees. If the multiSig
-   * joins as a primary key, it will be responsible for its own fees, otherwise the primary
-   * key will need to maintain adequate POLYX balance to ensure extrinsics are able to be
-   * submitted.
-   *
-   * Here the MultiSig joins the creator's identity as a secondary key with full permissions
-   *
-   */
-  const joinCreator = await multiSig.joinCreator(
-    { asPrimary: false, permissions: { assets: null, transactions: null, portfolios: null } },
-    { signingAccount: creatorAddress }
-  );
-  await joinCreator.run();
-  console.log('🔗 MultiSig joined creator as a secondary key\n');
 
   /**
    * Submitting transactions for a MultiSig is a bit different compared to regular accounts.

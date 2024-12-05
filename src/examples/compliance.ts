@@ -12,7 +12,7 @@ import { toHumanObject } from '~/common/utils';
 
 /*
   This script showcases Compliance related functionality. Covered functionality:
-    - Setting Compliance rules 
+    - Setting Compliance rules
     - Getting existing Compliance rules
     - Pausing Compliance rules
     - Unpausing Compliance rules

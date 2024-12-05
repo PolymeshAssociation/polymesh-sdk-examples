@@ -53,7 +53,7 @@
   },
   "dependencies": {
     "@polymeshassociation/local-signing-manager": "^3.1.0",
-    "@polymeshassociation/polymesh-sdk": "24.7.0-alpha.6",
+    "@polymeshassociation/polymesh-sdk": "27.0.1",
     "bluebird": "^3.7.2",
     "dotenv": "^16.0.3"
   },
