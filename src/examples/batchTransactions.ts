@@ -14,26 +14,27 @@ import { getClient } from '~/common/client';
   console.log('Connecting to the node...\n\n');
   const api = await getClient(process.env.ACCOUNT_SEED);
 
+  const suffix = Date.now().toString().slice(-6);
+
   // Batching 3 different transactions
-  const reserveTickerTx = await api.assets.reserveTicker({ ticker: 'SOME_TICKER' });
-  const createPortfolioTx = await api.identities.createPortfolio({ name: 'MY_PORTFOLIO' });
-  const freezeTx = await api.accountManagement.freezeSecondaryAccounts();
+  const reserveTickerTx = await api.assets.reserveTicker({ ticker: `BATCH${suffix}` });
+  const createPortfolioTx = await api.identities.createPortfolio({ name: `MY_PORTFOLIO_${suffix}` });
+  const createPortfolioTx2 = await api.identities.createPortfolio({ name: `MY_PORTFOLIO_${suffix}_2` });
 
   const batchTx1 = await api.createTransactionBatch({
     // `as const` is necessary so that the array is identified as a tuple
-    transactions: [reserveTickerTx, createPortfolioTx, freezeTx] as const,
+    transactions: [reserveTickerTx, createPortfolioTx, createPortfolioTx2] as const,
   });
 
-  // the third value is ignored because `freezeSecondaryAccounts` doesn't return anything
-  const [reservation, portfolio] = await batchTx1.run();
+  const [reservation, portfolio, portfolio2] = await batchTx1.run();
 
   console.log(`Ticker ${reservation.ticker} reserved`);
   console.log(`Portfolio with ID ${portfolio.id.toFormat()} created`);
-  console.log('Secondary Accounts frozen');
+  console.log(`Portfolio with ID ${portfolio2.id.toFormat()} created`);
 
   // Batching the same transaction
   const portfolioTxs = await P.map([1, 2, 3, 4, 5], (n) => {
-    const name = `PORTFOLIO_${n}`;
+    const name = `PORTFOLIO_${suffix}_${n}`;
 
     return api.identities.createPortfolio({
       name,
@@ -56,8 +57,8 @@ import { getClient } from '~/common/client';
    * the batch.
    */
   const batchTx3 = await api.assets.createAsset({
-    name: 'MY_ASSET',
-    ticker: 'MY_TICKER', // this is optional while creating an asset from 7.x chain
+    name: `MY_ASSET_${suffix}`,
+    ticker: `MYTKR${suffix}`,
     isDivisible: true,
     initialSupply: new BigNumber(10000),
     assetType: KnownAssetType.EquityCommon,

@@ -1,5 +1,4 @@
 import { BigNumber } from '@polymeshassociation/polymesh-sdk';
-import { Identity } from '@polymeshassociation/polymesh-sdk/types';
 
 import { getClient } from '~/common/client';
 import { parseArgs } from '~/common/utils';
@@ -36,32 +35,43 @@ type ScriptArgs = {
   // get subsidizer account
   const { account: subsidizer } = await identity.getPrimaryAccount();
 
-  // granting a subsidy to beneficiary
-  const subsidyGrantQ = await api.accountManagement.subsidizeAccount({
-    beneficiary,
-    allowance: new BigNumber(1000),
-  });
-  const subsidyGrantResult = await subsidyGrantQ.run();
-
-  console.log(`Subsidy request has been created and will expire in ${subsidyGrantResult.expiry}`);
+  try {
+    const approveSubsidyQ = await api.accountManagement.approveSubsidy({
+      beneficiary,
+      allowance: new BigNumber(1000),
+    });
+    await approveSubsidyQ.run();
+    console.log('Subsidy request has been approved and awaits acceptance by the beneficiary');
+  } catch (error) {
+    console.log(`Skipping approve subsidy (${(error as Error).message})`);
+  }
 
   // beneficiary now has to accept the subsidy request
-  // it is possible to run accept method on `subsidyGrantResult` however, it is more realistic to store the `authId` and then ask the beneficiary to accept the subsidy
   const beneficiaryApi = await getClient(process.env.BOB_SEED);
-  // on the beneficiary's side we need to get the signing identity to be able to accept the subsidy with beneficiary signature
-  const beneficiaryIdentity = (await beneficiaryApi.getSigningIdentity()) as Identity;
+  const beneficiaryAccount = (await beneficiaryApi.accountManagement.getSigningAccount())!;
 
-  const authorization = await beneficiaryIdentity.authorizations.getOne({
-    id: subsidyGrantResult.authId,
-  });
-  const acceptTx = await authorization.accept();
+  const pendingSubsidies = await beneficiaryAccount.subsidies.getPendingSubsidies();
+  console.log(`Pending subsidies for beneficiary: ${pendingSubsidies.length}`);
 
-  console.log(
-    `Subsidy request has been accepted by the beneficiary. Transaction status: ${acceptTx.status}`
-  );
+  try {
+    const acceptSubsidyQ = await beneficiaryApi.accountManagement.acceptSubsidy({
+      subsidizer,
+    });
+    await acceptSubsidyQ.run();
+    console.log('Subsidy request has been accepted by the beneficiary');
+  } catch (error) {
+    console.log(`Skipping accept subsidy (${(error as Error).message})`);
+  }
 
   // get subsidy
   const subsidy = api.accountManagement.getSubsidy({ subsidizer, beneficiary });
+  const subsidyExists = await subsidy.exists();
+
+  if (!subsidyExists) {
+    console.log('No active subsidy — skipping allowance management');
+    await api.disconnect();
+    return;
+  }
 
   // get allowance
   let allowance = await subsidy.getAllowance();
@@ -93,8 +103,8 @@ type ScriptArgs = {
   await quitSubsidyQ.run();
 
   // check if subsidy is still active
-  const subsidyExists = await subsidy.exists();
-  console.log(`Is subsidy still active: ${subsidyExists}`);
+  const subsidyStillExists = await subsidy.exists();
+  console.log(`Is subsidy still active: ${subsidyStillExists}`);
 
   console.log('Disconnecting from the node...\n');
   await api.disconnect();

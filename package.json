@@ -52,8 +52,8 @@
     "typescript": "4.6.2"
   },
   "dependencies": {
-    "@polymeshassociation/local-signing-manager": "^3.1.0",
-    "@polymeshassociation/polymesh-sdk": "27.3.0-alpha.1",
+    "@polymeshassociation/local-signing-manager": "^4.1.1",
+    "@polymeshassociation/polymesh-sdk": "30.0.0",
     "bluebird": "^3.7.2",
     "dotenv": "^16.0.3"
   },
@@ -64,5 +64,6 @@
   },
   "publishConfig": {
     "access": "public"
-  }
+  },
+  "packageManager": "yarn@4.12.0+sha512.f45ab632439a67f8bc759bf32ead036a1f413287b9042726b7cc4818b7b49e14e9423ba49b18f9e06ea4941c1ad062385b1d8760a8d5091a1a31e5f6219afca8"
 }
