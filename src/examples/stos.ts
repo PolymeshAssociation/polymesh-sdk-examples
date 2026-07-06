@@ -28,14 +28,11 @@ import { getClient } from '~/common/client';
 
   const asset = await getFungibleAsset(api, assetInput);
 
-  const raisingCurrency =
-    process.argv[3] ?? process.env.DIVIDEND_CURRENCY ?? 'USD_COIN';
+  const raisingCurrency = process.argv[3] ?? process.env.DIVIDEND_CURRENCY ?? 'USD_COIN';
 
-  let venues = await identity.getVenues();
+  const venues = await identity.getVenues();
   let venue = (
-    await Promise.all(
-      venues.map(async v => ({ venue: v, details: await v.details() }))
-    )
+    await Promise.all(venues.map(async (v) => ({ venue: v, details: await v.details() })))
   ).find(({ details }) => details.type === VenueType.Sto)?.venue;
   if (!venue) {
     console.log('Creating STO venue...');
@@ -59,7 +56,7 @@ import { getClient } from '~/common/client';
     venue, // optional, defaults to the first "Offering" type venue created by the owner of the Offering Portfolio
     name: 'MY_STO',
     start: new Date(), // optional, defaults to right now
-    end: new Date(new Date().getTime() + 365 * 24 * 60 * 60 * 1000), // optional, defaults to never
+    end: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000), // optional, defaults to never
     tiers: [
       {
         price: new BigNumber(100),

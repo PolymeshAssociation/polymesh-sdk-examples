@@ -72,13 +72,13 @@ import { getClient } from '~/common/client';
 
   // First element is always the default Portfolio
   const [, ...numberedPortfolios] = await identity.portfolios.getPortfolios();
-  const isIncludedInOwned = numberedPortfolios.some(p => p.id === portfolio.id); // Portfolio is still owned by signing Identity
+  const isIncludedInOwned = numberedPortfolios.some((p) => p.id === portfolio.id); // Portfolio is still owned by signing Identity
   console.log(`Included in portfolios owned by ${identity.did}: ${isIncludedInOwned}`);
 
   // Identity can filter those portfolios with a third party custodian
   const ownedButNotCustodiedPortfolios = await P.filter(
     numberedPortfolios,
-    portfolio => !portfolio.isCustodiedBy({ identity })
+    (portfolio) => !portfolio.isCustodiedBy({ identity })
   );
   console.log(`Portfolios owned with a third party custodian: ${ownedButNotCustodiedPortfolios}`);
 
@@ -100,7 +100,9 @@ import { getClient } from '~/common/client';
   // Bob can get all non owned portfolios where they are the custodian
   // getCustodiedPortfolios retrieves only portfolios owned by a different Identity but custodied by this one
   const custodiedPortfoliosAfterQuit = await bob.portfolios.getCustodiedPortfolios();
-  console.log(`Custodied Portfolios owned by a third party: ${custodiedPortfoliosAfterQuit.data.length}`);
+  console.log(
+    `Custodied Portfolios owned by a third party: ${custodiedPortfoliosAfterQuit.data.length}`
+  );
 
   await api.disconnect();
 })();

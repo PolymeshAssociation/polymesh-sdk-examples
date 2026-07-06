@@ -1,13 +1,16 @@
 import { LocalSigningManager } from '@polymeshassociation/local-signing-manager';
 import { BigNumber, Polymesh } from '@polymeshassociation/polymesh-sdk';
-import { Identity } from '@polymeshassociation/polymesh-sdk/types';
 import {
+  Identity,
   OfferingBalanceStatus,
   OfferingSaleStatus,
 } from '@polymeshassociation/polymesh-sdk/types';
 
 import { getFungibleAsset } from '~/common/assets';
 
+/**
+ * @hidden
+ */
 async function connectAs(mnemonic: string): Promise<Polymesh> {
   const signingManager = await LocalSigningManager.create({
     accounts: [{ mnemonic }],
@@ -25,6 +28,9 @@ async function connectAs(mnemonic: string): Promise<Polymesh> {
   });
 }
 
+/**
+ * @hidden
+ */
 async function connectDistinctInvestor(
   ownerDid: string,
   seeds: string[],
@@ -92,10 +98,7 @@ async function connectDistinctInvestor(
   const offeringId = offerings[0].offering.id;
 
   const { raisingCurrency, minInvestment } = await offerings[0].offering.details();
-  const requiredFunds = BigNumber.max(
-    purchaseAmount.multipliedBy(maxPrice),
-    minInvestment
-  );
+  const requiredFunds = BigNumber.max(purchaseAmount.multipliedBy(maxPrice), minInvestment);
 
   const { api: investorApi, identity: investor } = await connectDistinctInvestor(
     owner!.did,
@@ -154,7 +157,9 @@ async function connectDistinctInvestor(
 
     if (!fundedBalance?.free.gte(requiredFunds)) {
       throw new Error(
-        `Investor still lacks raising currency after settlement (free: ${fundedBalance?.free.toString() ?? '0'})`
+        `Investor still lacks raising currency after settlement (free: ${
+          fundedBalance?.free.toString() ?? '0'
+        })`
       );
     }
 
@@ -178,8 +183,8 @@ async function connectDistinctInvestor(
       balance: OfferingBalanceStatus.Available,
     },
   });
-  const investorOffering = investorOfferings.find(
-    ({ offering }) => offering.id.eq(offeringId)
+  const investorOffering = investorOfferings.find(({ offering }) =>
+    offering.id.eq(offeringId)
   )?.offering;
 
   if (!investorOffering) {

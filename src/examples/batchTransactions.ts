@@ -18,8 +18,12 @@ import { getClient } from '~/common/client';
 
   // Batching 3 different transactions
   const reserveTickerTx = await api.assets.reserveTicker({ ticker: `BATCH${suffix}` });
-  const createPortfolioTx = await api.identities.createPortfolio({ name: `MY_PORTFOLIO_${suffix}` });
-  const createPortfolioTx2 = await api.identities.createPortfolio({ name: `MY_PORTFOLIO_${suffix}_2` });
+  const createPortfolioTx = await api.identities.createPortfolio({
+    name: `MY_PORTFOLIO_${suffix}`,
+  });
+  const createPortfolioTx2 = await api.identities.createPortfolio({
+    name: `MY_PORTFOLIO_${suffix}_2`,
+  });
 
   const batchTx1 = await api.createTransactionBatch({
     // `as const` is necessary so that the array is identified as a tuple

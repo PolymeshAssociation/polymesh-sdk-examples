@@ -39,10 +39,7 @@ import { getClient } from '~/common/client';
   console.log(`Count restriction added! There are now ${restrictions.length} restrictions`); // 1
 
   const enablePercentageStatQ = await asset.transferRestrictions.setStats({
-    stats: [
-      { type: StatType.Count, count: investorCount },
-      { type: StatType.Balance },
-    ],
+    stats: [{ type: StatType.Count, count: investorCount }, { type: StatType.Balance }],
   });
   await enablePercentageStatQ.run();
 

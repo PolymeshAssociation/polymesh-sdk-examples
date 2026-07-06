@@ -6,7 +6,7 @@ Each file under `src/examples/` is a self-contained script you can run with `yar
 
 ## Requirements
 
-- **Node.js** 18+
+- **Node.js** 20+ (matches `@polymeshassociation/polymesh-sdk` engine requirement)
 - **Yarn** 4 (see `packageManager` in `package.json`)
 - A running **Polymesh node** (WebSocket endpoint)
 - **Polymesh middleware v2** (GraphQL) — required by the SDK for most queries

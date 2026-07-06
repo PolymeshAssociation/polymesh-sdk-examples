@@ -75,7 +75,7 @@ import { getClient } from '~/common/client';
     const expiry = new Date();
     expiry.setFullYear(expiry.getFullYear() + 1);
 
-    const lockedUntil = new Date(new Date().getTime() + 30 * 24 * 60 * 60);
+    const lockedUntil = new Date(Date.now() + 30 * 24 * 60 * 60);
 
     const setDetailsTx = await metadata.set({
       details: {

@@ -6,12 +6,6 @@
     "paths": {
       "~/*": ["src/*"]
     },
-    "plugins": [
-      {
-        "transform": "@ovos-media/ts-transform-paths",
-        "exclude": ["*"]
-      }
-    ],
     "target": "es6",
     "module": "commonjs",
     "declaration": true,

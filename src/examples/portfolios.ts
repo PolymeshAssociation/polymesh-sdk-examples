@@ -70,10 +70,14 @@ import { getClient } from '~/common/client';
   const issueTokensQ = await asset.issuance.issue({ amount });
   await issueTokensQ.run();
 
-  const portfolioQ = await api.identities.createPortfolio({ name: `MY_PORTFOLIO_${Date.now().toString().slice(-6)}` });
+  const portfolioQ = await api.identities.createPortfolio({
+    name: `MY_PORTFOLIO_${Date.now().toString().slice(-6)}`,
+  });
   const portfolio = await portfolioQ.run();
 
-  const renameQ = await portfolio.modifyName({ name: `NEW_NAME_${Date.now().toString().slice(-6)}` });
+  const renameQ = await portfolio.modifyName({
+    name: `NEW_NAME_${Date.now().toString().slice(-6)}`,
+  });
   await renameQ.run();
 
   const [defaultPortfolio, customPortfolio] = await identity.portfolios.getPortfolios(); // First element is always the default Portfolio
