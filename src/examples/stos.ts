@@ -1,4 +1,5 @@
 import { BigNumber } from '@polymeshassociation/polymesh-sdk';
+import { VenueType } from '@polymeshassociation/polymesh-sdk/types';
 
 import { getFungibleAsset } from '~/common/assets';
 import { getClient } from '~/common/client';
@@ -26,7 +27,21 @@ import { getClient } from '~/common/client';
   const identity = (await api.getSigningIdentity())!;
 
   const asset = await getFungibleAsset(api, assetInput);
-  const [venue] = await identity.getVenues();
+
+  const raisingCurrency = process.argv[3] ?? process.env.DIVIDEND_CURRENCY ?? 'USD_COIN';
+
+  const venues = await identity.getVenues();
+  let venue = (
+    await Promise.all(venues.map(async (v) => ({ venue: v, details: await v.details() })))
+  ).find(({ details }) => details.type === VenueType.Sto)?.venue;
+  if (!venue) {
+    console.log('Creating STO venue...');
+    const venueQ = await api.settlements.createVenue({
+      description: 'STO Venue',
+      type: VenueType.Sto,
+    });
+    venue = await venueQ.run();
+  }
 
   const offeringPortfolio = await identity.portfolios.getPortfolio();
   const raisingPortfolio = await identity.portfolios.getPortfolio({
@@ -37,11 +52,11 @@ import { getClient } from '~/common/client';
   const launchOfferingQ = await asset.offerings.launch({
     offeringPortfolio, // optional, defaults to the PIA's default portfolio
     raisingPortfolio,
-    raisingCurrency: 'USD_COIN',
+    raisingCurrency,
     venue, // optional, defaults to the first "Offering" type venue created by the owner of the Offering Portfolio
     name: 'MY_STO',
-    start: new Date(new Date().getTime() + 60 * 1000 * 20), // optional, defaults to right now
-    end: new Date(new Date().getTime() + 365 * 24 * 60 * 60 * 1000), // optional, defaults to never
+    start: new Date(), // optional, defaults to right now
+    end: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000), // optional, defaults to never
     tiers: [
       {
         price: new BigNumber(100),
@@ -81,13 +96,15 @@ import { getClient } from '~/common/client';
     );
   });
 
-  // Modify start/end time
-  const modifyTimesQ = await offering.modifyTimes({
-    start: new Date(new Date().getTime() + 30 * 1000),
-    end: null,
-  });
-
-  await modifyTimesQ.run();
+  // Modify start/end time (only end is adjustable once the offering has started)
+  try {
+    const modifyTimesQ = await offering.modifyTimes({
+      end: null,
+    });
+    await modifyTimesQ.run();
+  } catch (error) {
+    console.log('Skipping modifyTimes:', (error as Error).message);
+  }
 
   // Freeze
   const freezeQ = await offering.freeze();
@@ -97,9 +114,11 @@ import { getClient } from '~/common/client';
   const unfreezeQ = await offering.unfreeze();
   await unfreezeQ.run();
 
-  // Close
-  const closeQ = await offering.close();
-  await closeQ.run();
+  // Close (pass --close to run this step; skip when testing investInSto)
+  if (process.argv.includes('--close')) {
+    const closeQ = await offering.close();
+    await closeQ.run();
+  }
 
   await api.disconnect();
 })();

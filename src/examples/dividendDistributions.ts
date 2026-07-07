@@ -26,43 +26,45 @@ import { getClient } from '~/common/client';
   console.log(`Connected! Signing Identity ID: ${identity.did}`);
 
   const assetInput = process.argv[2];
+  const currencyInput = process.argv[3] ?? process.env.DIVIDEND_CURRENCY;
 
   if (!assetInput) {
     throw new Error('Please supply a ticker or Asset Id as an argument to the script');
   }
 
+  if (!currencyInput) {
+    throw new Error(
+      'Please supply a dividend currency asset ID as the second argument or set DIVIDEND_CURRENCY in the environment'
+    );
+  }
+
   const asset = await getFungibleAsset(api, assetInput);
   console.log(`Asset found! Current asset name is: ${(await asset.details()).name}`);
 
-  const originPortfolio = await identity.portfolios.getPortfolio({ portfolioId: new BigNumber(1) });
-
-  const nextMonth = new Date();
-  nextMonth.setDate(nextMonth.getDate() + 30);
   const checkpointDate = new Date();
-  checkpointDate.setDate(checkpointDate.getDate() + 20);
+  checkpointDate.setMinutes(checkpointDate.getMinutes() + 1);
+  const paymentDate = new Date();
+  paymentDate.setMinutes(paymentDate.getMinutes() + 2);
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  const bobDid = process.env.BOB_DID!;
   // this creates a Corporate Action under the hood and then uses it to create the Dividend Distribution
   const createQ = await asset.corporateActions.distributions.configureDividendDistribution({
     checkpoint: checkpointDate,
-    originPortfolio, // optional, defaults to the CAA's default portfolio
-    currency: '0xafacdf5f5f368b6790bd807aed1bf2e4',
-    perShare: new BigNumber(10),
-    maxAmount: new BigNumber(500),
-    paymentDate: nextMonth,
+    currency: currencyInput,
+    perShare: new BigNumber(1),
+    maxAmount: new BigNumber(10),
+    paymentDate,
     // expiryDate: undefined, means the distribution doesn't expire
     declarationDate: new Date('10/14/2020'),
     description: 'Gonna throw some money around',
     targets: {
-      identities: [
-        '0x0100000000000000000000000000000000000000000000000000000000000000',
-        '0x0200000000000000000000000000000000000000000000000000000000000000',
-        '0x0300000000000000000000000000000000000000000000000000000000000000',
-      ], // can be Identity objects as well
+      identities: [bobDid],
       treatment: TargetTreatment.Include,
     }, // optional
     defaultTaxWithholding: new BigNumber(10),
     taxWithholdings: [
       {
-        identity: '0x0100000000000000000000000000000000000000000000000000000000000000',
+        identity: bobDid,
         percentage: new BigNumber(15),
       },
     ],
@@ -96,19 +98,35 @@ import { getClient } from '~/common/client';
     console.log(`DID ${did} is owed ${amount.toFormat()}. Paid: ${paid}`);
   });
 
+  const waitMs = Math.max(0, paymentDate.getTime() - Date.now() + 5000);
+  if (waitMs > 0) {
+    console.log(`Waiting for payment date (${Math.ceil(waitMs / 1000)}s)...`);
+    await new Promise((resolve) => setTimeout(resolve, waitMs));
+  }
+
   // push Dividend payments to specific participants
-  const paymentQ = await distribution.pay({
-    targets: [participants[0].identity, participants[1].identity],
-  });
-  await paymentQ.run();
+  if (participants.length >= 1) {
+    const paymentQ = await distribution.pay({
+      targets: [participants[0].identity],
+    });
+    await paymentQ.run();
+  }
 
   // claim Dividend payment for the signing Identity
-  const claimQ = await distribution.claim();
-  await claimQ.run();
+  try {
+    const claimQ = await distribution.claim();
+    await claimQ.run();
+  } catch {
+    console.log('Skipping claim (signing Identity has no dividend to claim)\n');
+  }
 
   // reclaim remaining funds after expiry
-  const reclaimQ = await distribution.reclaimFunds();
-  await reclaimQ.run();
+  try {
+    const reclaimQ = await distribution.reclaimFunds();
+    await reclaimQ.run();
+  } catch {
+    console.log('Skipping fund reclaim (distribution has not expired)\n');
+  }
 
   // fetch all distributions for the Asset
   const allDistributions = await asset.corporateActions.distributions.get();

@@ -38,32 +38,24 @@ import { getClient } from '~/common/client';
 
   // Creates a Permission Group
 
-  const createGroupQ = await asset.permissions.createGroup({
-    permissions: {
-      transactions: {
-        values: [AssetTx.Freeze],
-        type: PermissionType.Include,
-      },
-      transactionGroups: [TxGroup.PortfolioManagement],
-    },
-    // permissions: {
-    //   transactions: {
-    //     values: [ModuleName.Asset],
-    //     type: PermissionType.Include,
-    //     exceptions: [AssetTx.Freeze],
-    //   },
-    //   transactionGroups: [TxGroup.PortfolioManagement],
-    // },
-    // permissions: {
-    //   transactions: {
-    //     values: [ModuleName.Asset],
-    //     type: PermissionType.Exclude,
-    //     exceptions: [AssetTx.Freeze],
-    //   },
-    // },
-  });
   console.log('Creating group...');
-  const newGroup = await createGroupQ.run();
+  let newGroup;
+  try {
+    const createGroupQ = await asset.permissions.createGroup({
+      permissions: {
+        transactions: {
+          values: [AssetTx.Freeze],
+          type: PermissionType.Include,
+        },
+        transactionGroups: [TxGroup.AssetManagement],
+      },
+    });
+    newGroup = await createGroupQ.run();
+  } catch {
+    const { custom } = await asset.permissions.getGroups();
+    newGroup = custom[custom.length - 1];
+    console.log('Reusing existing custom permission group');
+  }
 
   // Fetches all Permission Groups
 
@@ -101,20 +93,23 @@ import { getClient } from '~/common/client';
   const inviteAgentQ = await asset.permissions.inviteAgent({
     target: bobIdentity,
     permissions: newGroup,
-    // permissions: {
-    //   transactions: {
-    //     values: [AssetTx.Transfer],
-    //     type: PermissionType.Include
-    //   },
-    //   transactionGroups: [TxGroup.PortfolioManagement]
-    // }
   });
   console.log('Inviting agent...');
-  await inviteAgentQ.run();
+  let inviteResult;
+  try {
+    inviteResult = await inviteAgentQ.run();
+  } catch (error) {
+    console.log(`Skipping agent invite (${(error as Error).message})\n`);
+  }
+
+  if (inviteResult && 'authId' in inviteResult) {
+    console.log(`Authorization created with id ${inviteResult.authId.toString()}`);
+    console.log('The target Identity must accept the authorization before becoming an agent');
+  }
 
   // Fetches list of Agents and their respective Permission Groups
 
-  const agents = await asset.permissions.getAgents();
+  let agents = await asset.permissions.getAgents();
   console.log(`\nAgents and their groups:\n`);
   agents.forEach(({ agent, group }) => {
     console.log(`DID: ${agent.did}`);
@@ -124,11 +119,26 @@ import { getClient } from '~/common/client';
   });
 
   // Revokes an Agent's permissions
-  const removeAgentQ = await asset.permissions.removeAgent({
-    target: bobIdentity,
-  });
-  console.log('Revoking agent...');
-  await removeAgentQ.run();
+  const isBobAgent = agents.some(({ agent }) => agent.did === bobIdentity);
+
+  if (isBobAgent) {
+    const removeAgentQ = await asset.permissions.removeAgent({
+      target: bobIdentity,
+    });
+    console.log('Revoking agent...');
+    await removeAgentQ.run();
+
+    agents = await asset.permissions.getAgents();
+    console.log(`\nAgents after revoke:\n`);
+    agents.forEach(({ agent, group }) => {
+      console.log(`DID: ${agent.did}`);
+      console.log(
+        `${'type' in group ? 'Known' : 'Custom'} group: ${'type' in group ? group.type : group.id}`
+      );
+    });
+  } else {
+    console.log('\nSkipping agent revoke (target is not yet an active agent)\n');
+  }
 
   // Retrieves an Identity's Permission Group for a specific Asset
 
@@ -139,11 +149,15 @@ import { getClient } from '~/common/client';
 
   // Assigns an Identity to a different Permission Group
 
-  const setGroupQ = await identity.assetPermissions.setGroup({
-    group,
-  });
-  console.log('Assigning...');
-  await setGroupQ.run();
+  console.log('Assigning custom permission group...');
+  try {
+    const setGroupQ = await identity.assetPermissions.setGroup({
+      group: newGroup,
+    });
+    await setGroupQ.run();
+  } catch (error) {
+    console.log(`Skipping group assignment (${(error as Error).message})\n`);
+  }
 
   // Retrieves all the Assets over which this Identity has permissions
 
@@ -162,13 +176,15 @@ import { getClient } from '~/common/client';
   );
 
   // Abdicates from the current Permissions Group for a given Asset
+  // @note waived in this example to avoid removing the signing Identity as an agent
+  /*
+    const waiveQ = await identity.assetPermissions.waive({
+      asset: asset.id,
+    });
 
-  const waiveQ = await identity.assetPermissions.waive({
-    asset: asset.id,
-  });
-
-  console.log('Abdicating...');
-  await waiveQ.run();
+    console.log('Abdicating...');
+    await waiveQ.run();
+  */
 
   await api.disconnect();
 })();

@@ -1,15 +1,16 @@
 import { BigNumber } from '@polymeshassociation/polymesh-sdk';
+import { StatType, TransferRestrictionType } from '@polymeshassociation/polymesh-sdk/types';
 
 import { getFungibleAsset } from '~/common/assets';
 import { getClient } from '~/common/client';
 
 /*
   This script showcases Transfer Restriction related functionality. It:
-    - Adds a count restriction to a Asset
-    - Adds a percentage restriction to the Asset
-    - Sets (deletes existing and adds new) percentage restrictions on the Asset
-    - Removes all count restrictions from the Asset
-    - Fetches all percentage restrictions on the Asset
+    - Enables required stats and sets a count restriction
+    - Adds a percentage restriction
+    - Replaces percentage restrictions on the Asset
+    - Removes count restrictions
+    - Fetches active transfer restrictions
 */
 (async (): Promise<void> => {
   console.log('Connecting to the node...\n\n');
@@ -22,57 +23,64 @@ import { getClient } from '~/common/client';
   }
 
   const asset = await getFungibleAsset(api, assetInput);
+  const investorCount = await asset.investorCount();
 
-  const addCountRestrictionQ = await asset.transferRestrictions.count.addRestriction({
-    count: new BigNumber(10),
-    // unique investor scope IDs can be exempted from the restriction
-    // exempted: ['SOME_SCOPE_ID']
+  const enableCountStatQ = await asset.transferRestrictions.setStats({
+    stats: [{ type: StatType.Count, count: investorCount }],
   });
+  await enableCountStatQ.run();
 
-  let restrictionAmount = await addCountRestrictionQ.run();
-
-  console.log(`Count restriction added! There are now ${restrictionAmount} restrictions`); // 1
-
-  const addPercentageRestrictionQ = await asset.transferRestrictions.percentage.addRestriction({
-    percentage: new BigNumber(35),
+  let setRestrictionsQ = await asset.transferRestrictions.setRestrictions({
+    restrictions: [{ type: TransferRestrictionType.Count, count: new BigNumber(10) }],
   });
+  await setRestrictionsQ.run();
 
-  restrictionAmount = await addPercentageRestrictionQ.run();
+  let { restrictions } = await asset.transferRestrictions.getRestrictions();
+  console.log(`Count restriction added! There are now ${restrictions.length} restrictions`); // 1
 
-  console.log(`Percentage restriction added! There are now ${restrictionAmount} restrictions`); // 2
+  const enablePercentageStatQ = await asset.transferRestrictions.setStats({
+    stats: [{ type: StatType.Count, count: investorCount }, { type: StatType.Balance }],
+  });
+  await enablePercentageStatQ.run();
 
-  // throws an error if setting these restrictions would surpass the maximum amount of restrictions
-  const setPercentageRestrictionsQ = await asset.transferRestrictions.percentage.setRestrictions({
+  setRestrictionsQ = await asset.transferRestrictions.setRestrictions({
     restrictions: [
-      {
-        percentage: new BigNumber(25),
-        // can also have exemptions
-      },
-      {
-        percentage: new BigNumber(30),
-        // can have a different set of exemptions
-      },
+      { type: TransferRestrictionType.Count, count: new BigNumber(10) },
+      { type: TransferRestrictionType.Percentage, percentage: new BigNumber(35) },
     ],
   });
+  await setRestrictionsQ.run();
 
-  restrictionAmount = await setPercentageRestrictionsQ.run();
+  ({ restrictions } = await asset.transferRestrictions.getRestrictions());
+  console.log(`Percentage restriction added! There are now ${restrictions.length} restrictions`); // 2
 
-  console.log(`Percentage restrictions set! There are now ${restrictionAmount} restrictions`); // 3
+  setRestrictionsQ = await asset.transferRestrictions.setRestrictions({
+    restrictions: [
+      { type: TransferRestrictionType.Count, count: new BigNumber(10) },
+      { type: TransferRestrictionType.Percentage, percentage: new BigNumber(25) },
+      { type: TransferRestrictionType.Percentage, percentage: new BigNumber(30) },
+    ],
+  });
+  await setRestrictionsQ.run();
 
-  const removeCountRestrictionsQ = await asset.transferRestrictions.count.removeRestrictions();
+  ({ restrictions } = await asset.transferRestrictions.getRestrictions());
+  console.log(`Percentage restrictions set! There are now ${restrictions.length} restrictions`); // 3
 
-  restrictionAmount = await removeCountRestrictionsQ.run();
+  setRestrictionsQ = await asset.transferRestrictions.setRestrictions({
+    restrictions: [
+      { type: TransferRestrictionType.Percentage, percentage: new BigNumber(25) },
+      { type: TransferRestrictionType.Percentage, percentage: new BigNumber(30) },
+    ],
+  });
+  await setRestrictionsQ.run();
 
-  console.log(`Count restrictions removed! There are now ${restrictionAmount} restrictions`); // 2
+  ({ restrictions } = await asset.transferRestrictions.getRestrictions());
+  console.log(`Count restrictions removed! There are now ${restrictions.length} restrictions`); // 2
 
-  const { availableSlots, restrictions } = await asset.transferRestrictions.percentage.get();
-
-  console.log(`There are ${availableSlots} available restriction slots`); // 2
-
-  restrictions.forEach(({ percentage, exemptedIds = [] }, index) => {
-    console.log(
-      `Restriction Nº ${index}: percentage: ${percentage.toNumber()}, exempted: ${exemptedIds}`
-    );
+  restrictions.forEach((restriction, index) => {
+    if (restriction.type === TransferRestrictionType.Percentage) {
+      console.log(`Restriction Nº ${index}: percentage: ${restriction.value.toNumber()}`);
+    }
   });
 
   await api.disconnect();

@@ -7,7 +7,7 @@ import { renderClaim } from '~/common/utils';
   This script showcases Claim related functionality. It:
     - Add a claim
     - Revoke a claim
-    - Get CDD claims
+    - Get CDD claims (chain v7 only)
     - Get claims targeting a given Identity
     - Get claims issued by given Identity
 */
@@ -66,12 +66,16 @@ import { renderClaim } from '~/common/utils';
   console.log('Revoking claim...\n');
   await revokeQ.run();
 
-  const cddClaims = await api.claims.getCddClaims();
+  try {
+    const cddClaims = await api.claims.getCddClaims();
 
-  console.log('List of CDD claims for the signing Identity:\n');
-  cddClaims.forEach((claim, i) => {
-    renderClaim(claim, i + 1);
-  });
+    console.log('List of CDD claims for the signing Identity:\n');
+    cddClaims.forEach((claim, i) => {
+      renderClaim(claim, i + 1);
+    });
+  } catch {
+    console.log('Skipping CDD claims lookup (not supported on chain v8)\n');
+  }
 
   const targetingClaims = await api.claims.getTargetingClaims({ target: bobDid });
 

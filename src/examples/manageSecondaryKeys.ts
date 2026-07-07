@@ -1,3 +1,5 @@
+import { LocalSigningManager } from '@polymeshassociation/local-signing-manager';
+import { Polymesh } from '@polymeshassociation/polymesh-sdk';
 import { TxGroup } from '@polymeshassociation/polymesh-sdk/types';
 
 import { getClient } from '~/common/client';
@@ -16,10 +18,27 @@ import { getClient } from '~/common/client';
   const identity = (await api.getSigningIdentity())!;
   console.log(`Connected! Signing Identity ID: ${identity.did}`);
 
-  const accountAddress = process.argv[2];
+  let accountAddress = process.argv[2];
 
   if (!accountAddress) {
-    throw new Error('Please supply an account address as an argument to the script');
+    const mnemonic = LocalSigningManager.generateAccount();
+    const signingManager = await LocalSigningManager.create({
+      accounts: [{ mnemonic }],
+    });
+    const tempApi = await Polymesh.connect({
+      /* eslint-disable @typescript-eslint/no-non-null-assertion */
+      nodeUrl: process.env.POLYMESH_NODE_URL!,
+      middlewareV2: {
+        link: process.env.MIDDLEWARE_LINK!,
+        key: process.env.MIDDLEWARE_KEY!,
+      },
+      /* eslint-enable @typescript-eslint/no-non-null-assertion */
+      signingManager,
+    });
+    const [generatedAccount] = await tempApi.accountManagement.getSigningAccounts();
+    accountAddress = generatedAccount.address;
+    await tempApi.disconnect();
+    console.log(`Generated unlinked account for invitation: ${accountAddress}`);
   }
 
   // Account to invite to join the signing Identity
@@ -27,18 +46,21 @@ import { getClient } from '~/common/client';
     address: accountAddress,
   });
 
-  const inviteAccount = await api.accountManagement.inviteAccount({
-    targetAccount,
-    permissions: {
-      portfolios: null,
-      // `txGroupToTxTags` can be used to know which TxTags correspond to each group
-      transactionGroups: [TxGroup.Issuance, TxGroup.ClaimsManagement],
-      assets: null,
-    },
-  });
-
   console.log('Sending invitation to an account...');
-  await inviteAccount.run();
+  try {
+    const inviteAccount = await api.accountManagement.inviteAccount({
+      targetAccount,
+      permissions: {
+        portfolios: null,
+        // `txGroupToTxTags` can be used to know which TxTags correspond to each group
+        transactionGroups: [TxGroup.Issuance, TxGroup.ClaimsManagement],
+        assets: null,
+      },
+    });
+    await inviteAccount.run();
+  } catch (error) {
+    console.log(`Skipping invitation (${(error as Error).message})\n`);
+  }
 
   let secondaryAccounts = await identity.getSecondaryAccounts();
 
@@ -48,27 +70,37 @@ import { getClient } from '~/common/client';
   });
 
   if (secondaryAccounts.data.length) {
-    const modifyPermissions = await api.accountManagement.modifyPermissions({
-      secondaryAccounts: [
-        {
-          account: secondaryAccounts.data[0].account,
-          permissions: {
-            portfolios: null,
+    try {
+      const modifyPermissions = await api.accountManagement.modifyPermissions({
+        secondaryAccounts: [
+          {
+            account: secondaryAccounts.data[0].account,
+            permissions: {
+              portfolios: null,
+              assets: null,
+              transactionGroups: [TxGroup.Issuance],
+            },
           },
-        },
-      ],
-    });
+        ],
+      });
 
-    console.log('Modifying portfolios permissions to a secondary key...');
-    await modifyPermissions.run();
+      console.log('Modifying permissions on a secondary key...');
+      await modifyPermissions.run();
+    } catch (error) {
+      console.log(`Skipping permission update (${(error as Error).message})\n`);
+    }
   }
 
-  const removeKeysQ = await api.accountManagement.removeSecondaryAccounts({
-    accounts: secondaryAccounts.data.slice(0, 1).map(({ account }) => account),
-  });
+  try {
+    const removeKeysQ = await api.accountManagement.removeSecondaryAccounts({
+      accounts: secondaryAccounts.data.slice(0, 1).map(({ account }) => account),
+    });
 
-  console.log('Removing first key');
-  await removeKeysQ.run();
+    console.log('Removing first key');
+    await removeKeysQ.run();
+  } catch (error) {
+    console.log(`Skipping key removal (${(error as Error).message})\n`);
+  }
 
   secondaryAccounts = await identity.getSecondaryAccounts();
 

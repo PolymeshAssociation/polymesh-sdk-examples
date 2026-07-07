@@ -53,7 +53,11 @@ import { getClient } from '~/common/client';
   });
 
   console.log('Assigning a new corporate actions agent for the Asset...');
-  await setCorporateActionsAgent.run();
+  try {
+    await setCorporateActionsAgent.run();
+  } catch (error) {
+    console.log(`Skipping agent invite (${(error as Error).message})`);
+  }
 
   await api.disconnect();
 })();

@@ -1,6 +1,18 @@
 import { BigNumber } from '@polymeshassociation/polymesh-sdk';
-import { ClaimData, FungibleLeg, Leg, NftLeg } from '@polymeshassociation/polymesh-sdk/types';
-import { isEntity, isHexUuid, isUuid } from '@polymeshassociation/polymesh-sdk/utils';
+import {
+  Account,
+  AssetHolder,
+  ClaimData,
+  FungibleLeg,
+  Leg,
+  NftLeg,
+} from '@polymeshassociation/polymesh-sdk/types';
+import {
+  isEntity,
+  isHexUuid,
+  isPortfolioAssetHolder,
+  isUuid,
+} from '@polymeshassociation/polymesh-sdk/utils';
 
 /**
  * @hidden
@@ -37,7 +49,10 @@ export function parseArgs<T>(args: string[]): T {
     const [key, value] = arg.split('=');
 
     return Object.assign(acc, {
-      [key]: !isNaN(parseInt(value)) && isFinite(Number(value)) ? parseInt(value) : value,
+      [key]:
+        !Number.isNaN(Number.parseInt(value)) && Number.isFinite(Number(value))
+          ? Number.parseInt(value)
+          : value,
     });
   }, {});
 
@@ -81,4 +96,15 @@ export const isNftLeg = (leg: Leg): leg is NftLeg => {
  */
 export const isAssetId = (asset: string): boolean => {
   return isUuid(asset) || isHexUuid(asset);
+};
+
+/**
+ * @hidden
+ */
+export const getAssetHolderLabel = (holder: AssetHolder): string => {
+  if (isPortfolioAssetHolder(holder)) {
+    return holder.owner.did;
+  }
+
+  return (holder as Account).address;
 };

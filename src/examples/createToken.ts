@@ -7,7 +7,7 @@ import { getClient } from '~/common/client';
   This script showcases Asset related functionality. It:
     - Reserves a Asset with the specified ticker
     - Creates it
-    - Assigns a list of documents to the Asset
+    - Adds documents to the Asset
     - Removes a document from the current list
 */
 (async (): Promise<void> => {
@@ -57,8 +57,8 @@ import { getClient } from '~/common/client';
     contentHash: '0x02',
   };
 
-  let setDocumentsQ = await asset.documents.set({ documents: [doc1, doc2] });
-  await setDocumentsQ.run();
+  const addDocumentsQ = await asset.documents.add({ documents: [doc1, doc2] });
+  await addDocumentsQ.run();
 
   let docs = await asset.documents.get();
   console.log('Added documents:');
@@ -68,8 +68,12 @@ import { getClient } from '~/common/client';
 
   console.log('\nRemoving Document One...\n');
 
-  setDocumentsQ = await asset.documents.set({ documents: [doc2] });
-  await setDocumentsQ.run();
+  const documentOneId = docs.data.find(({ name }) => name === 'Document One')?.id;
+
+  if (documentOneId) {
+    const removeDocumentsQ = await asset.documents.remove({ documentIds: [documentOneId] });
+    await removeDocumentsQ.run();
+  }
 
   docs = await asset.documents.get();
 

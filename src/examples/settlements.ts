@@ -2,7 +2,7 @@ import { BigNumber } from '@polymeshassociation/polymesh-sdk';
 import { VenueType } from '@polymeshassociation/polymesh-sdk/types';
 
 import { getClient } from '~/common/client';
-import { isFungibleLeg, isNftLeg } from '~/common/utils';
+import { getAssetHolderLabel, isFungibleLeg, isNftLeg } from '~/common/utils';
 
 /*
   This script showcases Settlement related functionality. It:
@@ -35,6 +35,8 @@ import { isFungibleLeg, isNftLeg } from '~/common/utils';
   /* Venues can be fetched */
   // const venues = await identity.getVenues();
 
+  const assetInput = process.argv[2] ?? '2871e9af-9928-87f4-92fa-67b57ddf5068';
+
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const bob = await api.identities.getIdentity({ did: process.env.BOB_DID! });
 
@@ -45,11 +47,10 @@ import { isFungibleLeg, isNftLeg } from '~/common/utils';
       {
         to: identity, // passing the Identity (or did) means the default portfolio will be used
         from: destinationPortfolio, // or you can pass a Portfolio
-        amount: new BigNumber(1000),
-        asset: '0x9226abfd9c2d8b8583ab0b350cf44d0f',
+        amount: new BigNumber(10),
+        asset: assetInput,
       },
     ],
-    endBlock: new BigNumber(10000000),
     tradeDate: new Date('12/25/2030'),
     memo: 'Some message', // optional - passing a message with the instruction
   });
@@ -65,8 +66,9 @@ import { isFungibleLeg, isNftLeg } from '~/common/utils';
 
   const { data: affirmations } = await instruction.getAffirmations();
 
-  affirmations.forEach(({ identity, status }) => {
-    console.log(`- Authorizing DID: ${identity.did}\n- Status: ${status}`); // Authorized/Pending/Rejected/Unknown
+  affirmations.forEach(({ party, status }) => {
+    const partyLabel = 'did' in party ? party.did : party.address;
+    console.log(`- Authorizing party: ${partyLabel}\n- Status: ${status}`); // Authorized/Pending/Rejected/Unknown
   });
 
   const { data: legs } = await instruction.getLegs();
@@ -75,16 +77,18 @@ import { isFungibleLeg, isNftLeg } from '~/common/utils';
     if (isFungibleLeg(leg)) {
       const { from, to, amount, asset } = leg;
       console.log(
-        `- Fungible Leg:\n- From: ${from.owner.did}\n- To: ${
-          to.owner.did
-        }\n- Amount: ${amount.toString()}\n- Asset: ${asset}`
+        `- Fungible Leg:\n- From: ${getAssetHolderLabel(from)}\n- To: ${getAssetHolderLabel(
+          to
+        )}\n- Amount: ${amount.toString()}\n- Asset: ${asset}`
       );
     }
 
     if (isNftLeg(leg)) {
       const { from, to, nfts, asset } = leg;
       console.log(
-        `- Nft Leg:\n- From: ${from.owner.did}\n- To: ${to.owner.did} \n- Asset: ${asset}`
+        `- Nft Leg:\n- From: ${getAssetHolderLabel(from)}\n- To: ${getAssetHolderLabel(
+          to
+        )} \n- Asset: ${asset}`
       );
 
       const metaDataPromises = nfts.map((nft) => nft.getMetadata());
@@ -103,15 +107,15 @@ import { isFungibleLeg, isNftLeg } from '~/common/utils';
     }
   }
 
-  const authorizeQ = await instruction.affirm();
+  try {
+    const authorizeQ = await instruction.affirm();
+    await authorizeQ.run();
+  } catch (error) {
+    console.log(`Affirmation skipped (${(error as Error).message})`);
+  }
 
-  await authorizeQ.run();
-
-  /* Instructions can be unauthorized (will be withdrawn) or rejected */
+  /* Instructions can be rejected to revoke affirmation (withdraw is deprecated on chain v8) */
   /*
-    const unauthorizeQ = await instruction.unauthorize();
-    await unauthorizeQ.run();
-
     const rejectQ = await instruction.reject();
     await rejectQ.run();
   */
